@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Sidebar from "@/components/shared/Sidebar";
+import Header from "@/components/shared/Header";
 import DirectSalesFormSection from "@/components/sales/forms/DirectSalesForm";
 import TransportInfo from "@/components/sales/TransportInfo";
 
@@ -30,16 +30,16 @@ function DirectSalesPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar />
-      <div className="flex-1 flex">
+    <>
+      <Header />
+      <div className="flex-1 flex overflow-hidden">
         <DirectSalesFormSection
           formData={formData}
           onFormDataChange={handleInputChange}
         />
         <TransportInfo />
       </div>
-    </div>
+    </>
   );
 }
 
