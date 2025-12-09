@@ -3,10 +3,7 @@ import Header from "@/components/shared/Header";
 function Cruise() {
   return (
     <>
-      <Header
-        title="Cruise Sales"
-        subtitle="Manage cruise tour bookings and passenger information."
-      />
+      <Header />
       <div className="flex-1 p-8">
         <p className="text-gray-600">Cruise sales content coming soon...</p>
       </div>
