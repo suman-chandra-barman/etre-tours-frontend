@@ -32,7 +32,7 @@ function DirectSalesPage() {
   return (
     <>
       <Header />
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-2 flex overflow-hidden">
         <DirectSalesFormSection
           formData={formData}
           onFormDataChange={handleInputChange}

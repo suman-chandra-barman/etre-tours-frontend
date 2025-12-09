@@ -57,7 +57,10 @@ interface FormData {
 
 interface DirectSalesFormProps {
   formData: FormData;
-  onFormDataChange: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
+  onFormDataChange: <K extends keyof FormData>(
+    field: K,
+    value: FormData[K]
+  ) => void;
 }
 
 export default function DirectSalesForm({
@@ -88,45 +91,60 @@ export default function DirectSalesForm({
 
   return (
     <div className="flex-1 overflow-y-auto p-8">
-      <div className="max-w-3xl">
+      <div className="max-w-4xl">
         <h1 className="text-2xl font-semibold text-gray-800 mb-2">
           Pacific Tours Ticket
         </h1>
-        <p className="text-sm text-gray-500 mb-8">
+        <p className="text-sm max-w-xs text-gray-500 mb-8">
           Get started with tour, transport details & tourist guide to make work
           easy and smart.
         </p>
 
         {/* Date and Time Selection */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="relative">
-            <Input
-              type="date"
-              value={formData.date}
-              onChange={(e) => onFormDataChange("date", e.target.value)}
-              className="pr-10"
-            />
-            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">Date</Label>
+            <div className="relative">
+              <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              <Input
+                type="date"
+                value={formData.date}
+                onChange={(e) => onFormDataChange("date", e.target.value)}
+                className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              />
+            </div>
           </div>
-          <div className="relative">
-            <Input
-              type="time"
-              value={formData.departureTime}
-              onChange={(e) =>
-                onFormDataChange("departureTime", e.target.value)
-              }
-              className="pr-10"
-            />
-            <Clock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">
+              Departure Time
+            </Label>
+            <div className="relative">
+              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              <Input
+                type="time"
+                value={formData.departureTime}
+                onChange={(e) =>
+                  onFormDataChange("departureTime", e.target.value)
+                }
+                placeholder="Departure Time"
+                className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              />
+            </div>
           </div>
-          <div className="relative">
-            <Input
-              type="time"
-              value={formData.returnTime}
-              onChange={(e) => onFormDataChange("returnTime", e.target.value)}
-              className="pr-10"
-            />
-            <Clock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">
+              Return Time
+            </Label>
+            <div className="relative">
+              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              <Input
+                type="time"
+                value={formData.returnTime}
+                onChange={(e) => onFormDataChange("returnTime", e.target.value)}
+                placeholder="Return Time"
+                className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+              />
+            </div>
           </div>
         </div>
 
@@ -178,7 +196,7 @@ export default function DirectSalesForm({
               value={formData.transport}
               onValueChange={(value) => onFormDataChange("transport", value)}
             >
-              <SelectTrigger className="pl-10">
+              <SelectTrigger className="pl-10 w-full">
                 <SelectValue placeholder="Select a transport" />
               </SelectTrigger>
               <SelectContent>
@@ -196,7 +214,7 @@ export default function DirectSalesForm({
                 value={formData.driver}
                 onValueChange={(value) => onFormDataChange("driver", value)}
               >
-                <SelectTrigger className="pl-10">
+                <SelectTrigger className="pl-10 w-full">
                   <SelectValue placeholder="Assign driver" />
                 </SelectTrigger>
                 <SelectContent>
@@ -212,7 +230,7 @@ export default function DirectSalesForm({
                 value={formData.busId}
                 onValueChange={(value) => onFormDataChange("busId", value)}
               >
-                <SelectTrigger className="pl-10">
+                <SelectTrigger className="pl-10 w-full">
                   <SelectValue placeholder="Bus ID" />
                 </SelectTrigger>
                 <SelectContent>
@@ -233,7 +251,7 @@ export default function DirectSalesForm({
               value={formData.guide}
               onValueChange={(value) => onFormDataChange("guide", value)}
             >
-              <SelectTrigger className="pl-10">
+              <SelectTrigger className="pl-10 w-full">
                 <SelectValue placeholder="Assign a guide" />
               </SelectTrigger>
               <SelectContent>
@@ -277,134 +295,126 @@ export default function DirectSalesForm({
 
         {/* Passenger Count */}
         <div className="mb-6">
-          <div className="grid grid-cols-2 gap-3">
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Users className="w-4 h-4 text-muted-foreground mr-2" />
-                    <span className="text-sm">Adults</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7 rounded-full"
-                      onClick={() => decrementCounter("adults")}
-                    >
-                      <Minus className="h-3 w-3" />
-                    </Button>
-                    <span className="text-sm font-medium w-8 text-center">
-                      {formData.adults.toString().padStart(2, "0")}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7 rounded-full"
-                      onClick={() => incrementCounter("adults")}
-                    >
-                      <Plus className="h-3 w-3" />
-                    </Button>
-                  </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="border border-gray-200 rounded-lg p-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Users className="w-5 h-5 text-gray-400 mr-2" />
+                  <span className="text-sm text-gray-700">Adults</span>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-full border-gray-600"
+                    onClick={() => decrementCounter("adults")}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="text-sm font-medium w-8 text-center">
+                    {formData.adults.toString().padStart(2, "0")}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-full border-gray-600"
+                    onClick={() => incrementCounter("adults")}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Users className="w-4 h-4 text-muted-foreground mr-2" />
-                    <span className="text-sm">Children</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7 rounded-full"
-                      onClick={() => decrementCounter("children")}
-                    >
-                      <Minus className="h-3 w-3" />
-                    </Button>
-                    <span className="text-sm font-medium w-8 text-center">
-                      {formData.children.toString().padStart(2, "0")}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7 rounded-full"
-                      onClick={() => incrementCounter("children")}
-                    >
-                      <Plus className="h-3 w-3" />
-                    </Button>
-                  </div>
+            <div className="border border-gray-200 rounded-lg p-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Users className="w-5 h-5 text-gray-400 mr-2" />
+                  <span className="text-sm text-gray-700">Children</span>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-full border-gray-600"
+                    onClick={() => decrementCounter("children")}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="text-sm font-medium w-8 text-center">
+                    {formData.children.toString().padStart(2, "0")}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-full border-gray-600"
+                    onClick={() => incrementCounter("children")}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Baby className="w-4 h-4 text-muted-foreground mr-2" />
-                    <span className="text-sm">Infant</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7 rounded-full"
-                      onClick={() => decrementCounter("infant")}
-                    >
-                      <Minus className="h-3 w-3" />
-                    </Button>
-                    <span className="text-sm font-medium w-8 text-center">
-                      {formData.infant.toString().padStart(2, "0")}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7 rounded-full"
-                      onClick={() => incrementCounter("infant")}
-                    >
-                      <Plus className="h-3 w-3" />
-                    </Button>
-                  </div>
+            <div className="border border-gray-200 rounded-lg p-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Baby className="w-5 h-5 text-gray-400 mr-2" />
+                  <span className="text-sm text-gray-700">Infant</span>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-full border-gray-600"
+                    onClick={() => decrementCounter("infant")}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="text-sm font-medium w-8 text-center">
+                    {formData.infant.toString().padStart(2, "0")}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-full border-gray-600"
+                    onClick={() => incrementCounter("infant")}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Briefcase className="w-4 h-4 text-muted-foreground mr-2" />
-                    <span className="text-sm">FOC</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7 rounded-full"
-                      onClick={() => decrementCounter("foc")}
-                    >
-                      <Minus className="h-3 w-3" />
-                    </Button>
-                    <span className="text-sm font-medium w-8 text-center">
-                      {formData.foc.toString().padStart(2, "0")}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-7 w-7 rounded-full"
-                      onClick={() => incrementCounter("foc")}
-                    >
-                      <Plus className="h-3 w-3" />
-                    </Button>
-                  </div>
+            <div className="border border-gray-200 rounded-lg p-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Briefcase className="w-5 h-5 text-gray-400 mr-2" />
+                  <span className="text-sm text-gray-700">FOC</span>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-full border-gray-600"
+                    onClick={() => decrementCounter("foc")}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                  <span className="text-sm font-medium w-8 text-center">
+                    {formData.foc.toString().padStart(2, "0")}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-6 w-6 rounded-full border-gray-600"
+                    onClick={() => incrementCounter("foc")}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -443,8 +453,8 @@ export default function DirectSalesForm({
             </DropdownMenu>
           </div>
 
-          <Card>
-            <CardContent className="p-3">
+          <Card className="p-1">
+            <CardContent className="p-2">
               <label className="flex items-center cursor-pointer">
                 <input
                   type="radio"
