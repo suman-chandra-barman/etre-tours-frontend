@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React from "react";
 import {
   CalendarIcon,
   Clock,
@@ -13,15 +13,22 @@ import {
   Briefcase,
   CreditCard,
   Banknote,
-  Minus,
-  Plus,
+  MinusCircle,
+  PlusCircle,
   ChevronDown,
   Check,
 } from "lucide-react";
+import {
+  TOUR_OPTIONS,
+  TRANSPORT_OPTIONS,
+  DRIVER_OPTIONS,
+  BUS_ID_OPTIONS,
+  GUIDE_OPTIONS,
+  CURRENCY_OPTIONS,
+} from "@/constants/FormOptions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -29,12 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface FormData {
   date: string;
@@ -52,6 +53,7 @@ interface FormData {
   infant: number;
   foc: number;
   paymentMethod: string;
+  cardType?: string;
   currency: string;
 }
 
@@ -67,17 +69,8 @@ export default function DirectSalesForm({
   formData,
   onFormDataChange,
 }: DirectSalesFormProps) {
-  const [tourDropdownOpen, setTourDropdownOpen] = useState(false);
-  const [paymentDropdownOpen, setPaymentDropdownOpen] = useState(false);
-
-  const tours = [
-    "Lagoon Snorkeling",
-    "Lagoon Snorkeling",
-    "Lagoon Snorkeling",
-    "Lagoon Snorkeling",
-  ];
-
-  const currencies = ["XPF", "USD", "AUD", "Euro"];
+  const [isCardPaymentExpanded, setIsCardPaymentExpanded] =
+    React.useState(false);
 
   const incrementCounter = (field: string) => {
     const currentValue = formData[field as keyof FormData] as number;
@@ -87,6 +80,27 @@ export default function DirectSalesForm({
   const decrementCounter = (field: string) => {
     const currentValue = formData[field as keyof FormData] as number;
     onFormDataChange(field as keyof FormData, Math.max(currentValue - 1, 0));
+  };
+
+  const isFormValid = () => {
+    return (
+      formData.date !== "" &&
+      formData.departureTime !== "" &&
+      formData.returnTime !== "" &&
+      formData.tour !== "" &&
+      formData.transport !== "" &&
+      formData.driver !== "" &&
+      formData.busId !== "" &&
+      formData.guide !== "" &&
+      formData.fullName.trim() !== "" &&
+      formData.phoneNumber.trim() !== "" &&
+      (formData.adults > 0 ||
+        formData.children > 0 ||
+        formData.infant > 0 ||
+        formData.foc > 0) &&
+      formData.paymentMethod !== "" &&
+      (formData.paymentMethod === "cash" || formData.currency !== "")
+    );
   };
 
   return (
@@ -110,6 +124,7 @@ export default function DirectSalesForm({
                 type="date"
                 value={formData.date}
                 onChange={(e) => onFormDataChange("date", e.target.value)}
+                required
                 className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
             </div>
@@ -126,6 +141,7 @@ export default function DirectSalesForm({
                 onChange={(e) =>
                   onFormDataChange("departureTime", e.target.value)
                 }
+                required
                 placeholder="Departure Time"
                 className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
@@ -141,6 +157,7 @@ export default function DirectSalesForm({
                 type="time"
                 value={formData.returnTime}
                 onChange={(e) => onFormDataChange("returnTime", e.target.value)}
+                required
                 placeholder="Return Time"
                 className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
@@ -151,41 +168,24 @@ export default function DirectSalesForm({
         {/* Tour Details */}
         <div className="mb-6">
           <Label className="mb-2">Tour Details</Label>
-          <DropdownMenu
-            open={tourDropdownOpen}
-            onOpenChange={setTourDropdownOpen}
-          >
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full justify-start h-11 font-normal"
-              >
-                <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
-                <span
-                  className={
-                    formData.tour ? "text-foreground" : "text-muted-foreground"
-                  }
-                >
-                  {formData.tour || "Pick a tour spot"}
-                </span>
-                <ChevronDown className="w-4 h-4 ml-auto text-muted-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-              {tours.map((tour, index) => (
-                <DropdownMenuItem
-                  key={index}
-                  onClick={() => onFormDataChange("tour", tour)}
-                  className="flex items-center justify-between"
-                >
-                  {tour}
-                  {formData.tour === tour && (
-                    <Check className="w-4 h-4 text-primary" />
-                  )}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="relative">
+            <Select
+              value={formData.tour}
+              onValueChange={(value) => onFormDataChange("tour", value)}
+            >
+              <SelectTrigger className="pl-10 w-full h-11">
+                <SelectValue placeholder="Pick a tour spot" />
+              </SelectTrigger>
+              <SelectContent>
+                {TOUR_OPTIONS.map((tour) => (
+                  <SelectItem key={tour.value} value={tour.value}>
+                    {tour.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+          </div>
         </div>
 
         {/* Transport Details */}
@@ -196,13 +196,15 @@ export default function DirectSalesForm({
               value={formData.transport}
               onValueChange={(value) => onFormDataChange("transport", value)}
             >
-              <SelectTrigger className="pl-10 w-full">
+              <SelectTrigger className="pl-10 w-full h-11">
                 <SelectValue placeholder="Select a transport" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Bus 1">Bus 1</SelectItem>
-                <SelectItem value="Bus 2">Bus 2</SelectItem>
-                <SelectItem value="Van 1">Van 1</SelectItem>
+                {TRANSPORT_OPTIONS.map((transport) => (
+                  <SelectItem key={transport.value} value={transport.value}>
+                    {transport.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <Bus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
@@ -214,12 +216,15 @@ export default function DirectSalesForm({
                 value={formData.driver}
                 onValueChange={(value) => onFormDataChange("driver", value)}
               >
-                <SelectTrigger className="pl-10 w-full">
+                <SelectTrigger className="pl-10 w-full h-11">
                   <SelectValue placeholder="Assign driver" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Driver 1">Driver 1</SelectItem>
-                  <SelectItem value="Driver 2">Driver 2</SelectItem>
+                  {DRIVER_OPTIONS.map((driver) => (
+                    <SelectItem key={driver.value} value={driver.value}>
+                      {driver.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
@@ -230,12 +235,15 @@ export default function DirectSalesForm({
                 value={formData.busId}
                 onValueChange={(value) => onFormDataChange("busId", value)}
               >
-                <SelectTrigger className="pl-10 w-full">
+                <SelectTrigger className="pl-10 w-full h-11">
                   <SelectValue placeholder="Bus ID" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="BUS-001">BUS-001</SelectItem>
-                  <SelectItem value="BUS-002">BUS-002</SelectItem>
+                  {BUS_ID_OPTIONS.map((busId) => (
+                    <SelectItem key={busId.value} value={busId.value}>
+                      {busId.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
@@ -251,12 +259,15 @@ export default function DirectSalesForm({
               value={formData.guide}
               onValueChange={(value) => onFormDataChange("guide", value)}
             >
-              <SelectTrigger className="pl-10 w-full">
+              <SelectTrigger className="pl-10 w-full h-11">
                 <SelectValue placeholder="Assign a guide" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Guide 1">Guide 1</SelectItem>
-                <SelectItem value="Guide 2">Guide 2</SelectItem>
+                {GUIDE_OPTIONS.map((guide) => (
+                  <SelectItem key={guide.value} value={guide.value}>
+                    {guide.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
@@ -272,8 +283,9 @@ export default function DirectSalesForm({
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => onFormDataChange("fullName", e.target.value)}
+                required
                 placeholder="Enter full name"
-                className="pl-10"
+                className="pl-10 h-11"
               />
               <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             </div>
@@ -285,8 +297,9 @@ export default function DirectSalesForm({
                 onChange={(e) =>
                   onFormDataChange("phoneNumber", e.target.value)
                 }
+                required
                 placeholder="Phone number"
-                className="pl-10"
+                className="pl-10 h-11"
               />
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             </div>
@@ -296,122 +309,90 @@ export default function DirectSalesForm({
         {/* Passenger Count */}
         <div className="mb-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className="border border-gray-200 rounded-lg p-2">
-              <div className="flex items-center justify-between">
+            <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
+              <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
                   <Users className="w-5 h-5 text-gray-400 mr-2" />
                   <span className="text-sm text-gray-700">Adults</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-6 w-6 rounded-full border-gray-600"
+                  <MinusCircle
+                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
                     onClick={() => decrementCounter("adults")}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
+                  />
                   <span className="text-sm font-medium w-8 text-center">
                     {formData.adults.toString().padStart(2, "0")}
                   </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-6 w-6 rounded-full border-gray-600"
+                  <PlusCircle
+                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
                     onClick={() => incrementCounter("adults")}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="border border-gray-200 rounded-lg p-2">
-              <div className="flex items-center justify-between">
+            <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
+              <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
                   <Users className="w-5 h-5 text-gray-400 mr-2" />
                   <span className="text-sm text-gray-700">Children</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-6 w-6 rounded-full border-gray-600"
+                  <MinusCircle
+                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
                     onClick={() => decrementCounter("children")}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
+                  />
                   <span className="text-sm font-medium w-8 text-center">
                     {formData.children.toString().padStart(2, "0")}
                   </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-6 w-6 rounded-full border-gray-600"
+                  <PlusCircle
+                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
                     onClick={() => incrementCounter("children")}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="border border-gray-200 rounded-lg p-2">
-              <div className="flex items-center justify-between">
+            <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
+              <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
                   <Baby className="w-5 h-5 text-gray-400 mr-2" />
                   <span className="text-sm text-gray-700">Infant</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-6 w-6 rounded-full border-gray-600"
+                  <MinusCircle
+                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
                     onClick={() => decrementCounter("infant")}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
+                  />
                   <span className="text-sm font-medium w-8 text-center">
                     {formData.infant.toString().padStart(2, "0")}
                   </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-6 w-6 rounded-full border-gray-600"
+                  <PlusCircle
+                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
                     onClick={() => incrementCounter("infant")}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="border border-gray-200 rounded-lg p-2">
-              <div className="flex items-center justify-between">
+            <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
+              <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
                   <Briefcase className="w-5 h-5 text-gray-400 mr-2" />
                   <span className="text-sm text-gray-700">FOC</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-6 w-6 rounded-full border-gray-600"
+                  <MinusCircle
+                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
                     onClick={() => decrementCounter("foc")}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
+                  />
                   <span className="text-sm font-medium w-8 text-center">
                     {formData.foc.toString().padStart(2, "0")}
                   </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-6 w-6 rounded-full border-gray-600"
+                  <PlusCircle
+                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
                     onClick={() => incrementCounter("foc")}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  />
                 </div>
               </div>
             </div>
@@ -421,62 +402,104 @@ export default function DirectSalesForm({
         {/* Payment Method */}
         <div className="mb-8">
           <Label className="mb-2">Payment Method</Label>
-          <div className="mb-3">
-            <DropdownMenu
-              open={paymentDropdownOpen}
-              onOpenChange={setPaymentDropdownOpen}
-            >
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start h-11 font-normal"
+          <div className="space-y-3">
+            <div className="relative">
+              <div className={`border rounded-lg transition-colors`}>
+                <div
+                  className="px-3 h-11 flex items-center justify-between cursor-pointer bg-transparent hover:bg-gray-50 rounded-lg"
+                  onClick={() => {
+                    setIsCardPaymentExpanded(!isCardPaymentExpanded);
+                    onFormDataChange("paymentMethod", "card");
+                  }}
                 >
-                  <CreditCard className="w-4 h-4 mr-2 text-muted-foreground" />
-                  <span>{formData.paymentMethod}</span>
-                  <ChevronDown className="w-4 h-4 ml-auto text-muted-foreground" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)]">
-                {currencies.map((currency, index) => (
-                  <DropdownMenuItem
-                    key={index}
-                    onClick={() => onFormDataChange("currency", currency)}
-                    className="flex items-center justify-between"
-                  >
-                    {currency}
-                    {formData.currency === currency && (
-                      <Check className="w-4 h-4 text-primary" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                  <div className="flex items-center">
+                    <CreditCard className="w-4 h-4 mr-2 text-muted-foreground" />
+                    <span
+                      className={`text-sm ${
+                        formData.currency && formData.paymentMethod === "card"
+                          ? "text-gray-900"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      {formData.currency && formData.paymentMethod === "card"
+                        ? CURRENCY_OPTIONS.find(
+                            (c) => c.value === formData.currency
+                          )?.label
+                        : "Card Payment"}
+                    </span>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-muted-foreground transition-transform ${
+                      isCardPaymentExpanded ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
+              </div>
 
-          <Card className="p-1">
-            <CardContent className="p-2">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="paymentType"
-                  value="Cash"
-                  checked={formData.paymentMethod === "Cash"}
-                  onChange={() => onFormDataChange("paymentMethod", "Cash")}
-                  className="w-4 h-4 text-primary"
-                />
-                <Banknote className="w-4 h-4 ml-3 mr-2 text-muted-foreground" />
-                <span className="text-sm">Cash</span>
-              </label>
-            </CardContent>
-          </Card>
+              {isCardPaymentExpanded && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  {CURRENCY_OPTIONS.map((currency) => (
+                    <div
+                      key={currency.value}
+                      className={`px-3 h-10 flex items-center justify-between cursor-pointer hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${
+                        formData.currency === currency.value
+                          ? "bg-blue-50 text-blue-600"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        onFormDataChange("currency", currency.value);
+                        setIsCardPaymentExpanded(false);
+                      }}
+                    >
+                      <span className="text-sm">{currency.label}</span>
+                      {formData.currency === currency.value && (
+                        <Check className="w-4 h-4 text-blue-600" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div
+              className={`border rounded-lg px-3 h-11 flex items-center justify-between cursor-pointer transition-colors`}
+              onClick={() => {
+                onFormDataChange("paymentMethod", "cash");
+                setIsCardPaymentExpanded(false);
+              }}
+            >
+              <div className="flex items-center">
+                <Banknote className="w-4 h-4 mr-2 text-muted-foreground" />
+                <span className="text-sm text-gray-700">Cash</span>
+              </div>
+              <div
+                className={`w-4.5 h-4.5 rounded-full border-2 flex items-center justify-center ${
+                  formData.paymentMethod === "cash"
+                    ? "border-blue-500"
+                    : "border-gray-300"
+                }`}
+              >
+                {formData.paymentMethod === "cash" && (
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4">
-          <Button variant="outline" size="default">
+          <Button variant="outline" size="default" className="rounded-full">
             Cancel
           </Button>
-          <Button size="default">Confirm booking</Button>
+          <Button
+            size="default"
+            disabled={!isFormValid()}
+            onClick={() => console.log("Form Data:", formData)}
+            className="bg-blue-500 hover:bg-blue-600 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Continue
+          </Button>
         </div>
       </div>
     </div>
