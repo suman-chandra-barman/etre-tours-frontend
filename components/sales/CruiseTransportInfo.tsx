@@ -86,8 +86,8 @@ function CruiseTransportInfo({
   const totalPassengers = totalAdults + totalChildren + totalInfants + totalFOC;
 
   return (
-    <div className="flex-1 bg-white p-8 border-l border-gray-200 overflow-y-auto">
-      <div className="max-w-md">
+    <div className=" bg-white p-8 border-l border-gray-200 overflow-y-auto min-w-md">
+      <div className="">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
@@ -222,9 +222,7 @@ function CruiseTransportInfo({
               )}
             </div>
             <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-              <span className="font-semibold text-blue-600">
-                Total
-              </span>
+              <span className="font-semibold text-blue-600">Total</span>
               <span className="text-lg font-bold text-blue-600">
                 {totalPassengers} pax
               </span>
