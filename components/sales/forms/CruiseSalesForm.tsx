@@ -72,11 +72,13 @@ interface DirectSalesFormProps {
     field: K,
     value: FormData[K]
   ) => void;
+  onAdditionalTransportsChange?: (transports: AdditionalTransport[]) => void;
 }
 
 export default function CruiseSalesForm({
   formData,
   onFormDataChange,
+  onAdditionalTransportsChange,
 }: DirectSalesFormProps) {
   const [additionalTransports, setAdditionalTransports] = React.useState<
     AdditionalTransport[]
@@ -84,8 +86,8 @@ export default function CruiseSalesForm({
   const [nextTransportId, setNextTransportId] = React.useState(2);
 
   const addNewTransport = () => {
-    setAdditionalTransports((prev) => [
-      ...prev,
+    const newTransports = [
+      ...additionalTransports,
       {
         id: nextTransportId,
         transport: "",
@@ -98,12 +100,16 @@ export default function CruiseSalesForm({
         guide: "",
         extraGuide: "",
       },
-    ]);
+    ];
+    setAdditionalTransports(newTransports);
+    onAdditionalTransportsChange?.(newTransports);
     setNextTransportId((prev) => prev + 1);
   };
 
   const removeTransport = (id: number) => {
-    setAdditionalTransports((prev) => prev.filter((t) => t.id !== id));
+    const newTransports = additionalTransports.filter((t) => t.id !== id);
+    setAdditionalTransports(newTransports);
+    onAdditionalTransportsChange?.(newTransports);
   };
 
   const updateAdditionalTransport = <K extends keyof AdditionalTransport>(
@@ -111,9 +117,11 @@ export default function CruiseSalesForm({
     field: K,
     value: AdditionalTransport[K]
   ) => {
-    setAdditionalTransports((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, [field]: value } : t))
+    const newTransports = additionalTransports.map((t) =>
+      t.id === id ? { ...t, [field]: value } : t
     );
+    setAdditionalTransports(newTransports);
+    onAdditionalTransportsChange?.(newTransports);
   };
 
   const incrementAdditionalCounter = (

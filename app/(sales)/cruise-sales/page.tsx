@@ -2,8 +2,21 @@
 
 import { useState } from "react";
 import Header from "@/components/shared/Header";
-import TransportInfo from "@/components/sales/TransportInfo";
 import CruiseSalesForm from "@/components/sales/forms/CruiseSalesForm";
+import CruiseTransportInfo from "@/components/sales/CruiseTransportInfo";
+
+interface AdditionalTransport {
+  id: number;
+  transport: string;
+  driver: string;
+  busId: string;
+  adults: number;
+  children: number;
+  infant: number;
+  foc: number;
+  guide: string;
+  extraGuide: string;
+}
 
 function CruiseSalesPage() {
   const [formData, setFormData] = useState({
@@ -25,8 +38,18 @@ function CruiseSalesPage() {
     currency: "USD",
   });
 
+  const [additionalTransports, setAdditionalTransports] = useState<
+    AdditionalTransport[]
+  >([]);
+
   const handleInputChange = (field: string, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleAdditionalTransportsChange = (
+    transports: AdditionalTransport[]
+  ) => {
+    setAdditionalTransports(transports);
   };
 
   return (
@@ -36,12 +59,15 @@ function CruiseSalesPage() {
         <CruiseSalesForm
           formData={formData}
           onFormDataChange={handleInputChange}
+          onAdditionalTransportsChange={handleAdditionalTransportsChange}
         />
-        <TransportInfo />
+        <CruiseTransportInfo
+          formData={formData}
+          additionalTransports={additionalTransports}
+        />
       </div>
     </>
   );
-
 }
 
 export default CruiseSalesPage;
