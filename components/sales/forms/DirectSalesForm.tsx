@@ -274,8 +274,11 @@ export default function DirectSalesForm({
           </div>
         </div>
 
+        {/* Separator */}
+        <div className="border border-dashed my-6" />
+
         {/* Buyer's Details */}
-        <div className="mb-6">
+        <div className="mb-3">
           <Label className="mb-2">Buyer&apos;s Details</Label>
           <div className="space-y-3">
             <div className="relative">
@@ -308,7 +311,7 @@ export default function DirectSalesForm({
 
         {/* Passenger Count */}
         <div className="mb-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
@@ -398,6 +401,9 @@ export default function DirectSalesForm({
             </div>
           </div>
         </div>
+
+        {/* Separator */}
+        <div className="border border-dashed my-6" />
 
         {/* Payment Method */}
         <div className="mb-8">
