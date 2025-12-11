@@ -7,17 +7,13 @@ import {
   MapPin,
   Bus,
   UserCircle2,
-  Phone,
   Users,
   Baby,
   Briefcase,
-  CreditCard,
-  Banknote,
   MinusCircle,
   PlusCircle,
-  ChevronDown,
-  Check,
   Plus,
+  Minus,
 } from "lucide-react";
 import {
   TOUR_OPTIONS,
@@ -25,7 +21,6 @@ import {
   DRIVER_OPTIONS,
   BUS_ID_OPTIONS,
   GUIDE_OPTIONS,
-  CURRENCY_OPTIONS,
 } from "@/constants/FormOptions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +53,19 @@ interface FormData {
   currency: string;
 }
 
+interface AdditionalTransport {
+  id: number;
+  transport: string;
+  driver: string;
+  busId: string;
+  adults: number;
+  children: number;
+  infant: number;
+  foc: number;
+  guide: string;
+  extraGuide: string;
+}
+
 interface DirectSalesFormProps {
   formData: FormData;
   onFormDataChange: <K extends keyof FormData>(
@@ -70,14 +78,127 @@ export default function CruiseSalesForm({
   formData,
   onFormDataChange,
 }: DirectSalesFormProps) {
-  const [isCardPaymentExpanded, setIsCardPaymentExpanded] =
-    React.useState(false);
+  const [additionalTransports, setAdditionalTransports] = React.useState<
+    AdditionalTransport[]
+  >([]);
+  const [nextTransportId, setNextTransportId] = React.useState(2);
 
-  // Pricing constants
-  const ADULT_PRICE = 49.0;
-  const CHILD_PRICE = 29.0;
-  const INFANT_PRICE = 0.0;
-  const FOC_PRICE = 0.0;
+  const addNewTransport = () => {
+    setAdditionalTransports((prev) => [
+      ...prev,
+      {
+        id: nextTransportId,
+        transport: "",
+        driver: "",
+        busId: "",
+        adults: 0,
+        children: 0,
+        infant: 0,
+        foc: 0,
+        guide: "",
+        extraGuide: "",
+      },
+    ]);
+    setNextTransportId((prev) => prev + 1);
+  };
+
+  const removeTransport = (id: number) => {
+    setAdditionalTransports((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const updateAdditionalTransport = <K extends keyof AdditionalTransport>(
+    id: number,
+    field: K,
+    value: AdditionalTransport[K]
+  ) => {
+    setAdditionalTransports((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, [field]: value } : t))
+    );
+  };
+
+  const incrementAdditionalCounter = (
+    id: number,
+    field: keyof AdditionalTransport
+  ) => {
+    const transport = additionalTransports.find((t) => t.id === id);
+    if (transport) {
+      const currentValue = transport[field] as number;
+      updateAdditionalTransport(
+        id,
+        field,
+        Math.min(currentValue + 1, 99) as AdditionalTransport[typeof field]
+      );
+    }
+  };
+
+  const decrementAdditionalCounter = (
+    id: number,
+    field: keyof AdditionalTransport
+  ) => {
+    const transport = additionalTransports.find((t) => t.id === id);
+    if (transport) {
+      const currentValue = transport[field] as number;
+      updateAdditionalTransport(
+        id,
+        field,
+        Math.max(currentValue - 1, 0) as AdditionalTransport[typeof field]
+      );
+    }
+  };
+
+  const handleAdditionalCounterChange = (
+    id: number,
+    field: keyof AdditionalTransport,
+    value: string
+  ) => {
+    const numValue = parseInt(value) || 0;
+    updateAdditionalTransport(
+      id,
+      field,
+      Math.min(Math.max(numValue, 0), 99) as AdditionalTransport[typeof field]
+    );
+  };
+
+  // Calculate total passengers across all transports
+  const getTotalPassengers = () => {
+    const mainAdults = formData.adults;
+    const mainChildren = formData.children;
+    const mainInfant = formData.infant;
+    const mainFoc = formData.foc;
+
+    const additionalAdults = additionalTransports.reduce(
+      (sum, t) => sum + t.adults,
+      0
+    );
+    const additionalChildren = additionalTransports.reduce(
+      (sum, t) => sum + t.children,
+      0
+    );
+    const additionalInfant = additionalTransports.reduce(
+      (sum, t) => sum + t.infant,
+      0
+    );
+    const additionalFoc = additionalTransports.reduce(
+      (sum, t) => sum + t.foc,
+      0
+    );
+
+    return {
+      adults: mainAdults + additionalAdults,
+      children: mainChildren + additionalChildren,
+      infant: mainInfant + additionalInfant,
+      foc: mainFoc + additionalFoc,
+      total:
+        mainAdults +
+        additionalAdults +
+        mainChildren +
+        additionalChildren +
+        mainInfant +
+        additionalInfant +
+        mainFoc +
+        additionalFoc,
+    };
+  };
 
   const incrementCounter = (field: string) => {
     const currentValue = formData[field as keyof FormData] as number;
@@ -97,15 +218,6 @@ export default function CruiseSalesForm({
     );
   };
 
-  // Calculate totals
-  const calculateTotal = () => {
-    const adultsTotal = formData.adults * ADULT_PRICE;
-    const childrenTotal = formData.children * CHILD_PRICE;
-    const infantTotal = formData.infant * INFANT_PRICE;
-    const focTotal = formData.foc * FOC_PRICE;
-    return adultsTotal + childrenTotal + infantTotal + focTotal;
-  };
-
   const isFormValid = () => {
     return (
       formData.date !== "" &&
@@ -116,14 +228,10 @@ export default function CruiseSalesForm({
       formData.driver !== "" &&
       formData.busId !== "" &&
       formData.guide !== "" &&
-      formData.fullName.trim() !== "" &&
-      formData.phoneNumber.trim() !== "" &&
       (formData.adults > 0 ||
         formData.children > 0 ||
         formData.infant > 0 ||
-        formData.foc > 0) &&
-      formData.paymentMethod !== "" &&
-      (formData.paymentMethod === "cash" || formData.currency !== "")
+        formData.foc > 0)
     );
   };
 
@@ -215,7 +323,13 @@ export default function CruiseSalesForm({
         <div className="mb-6">
           <div className="flex items-center justify-between gap-2 mb-2">
             <Label className="">Transport Details</Label>
-            <Button variant="link" size="sm" className="text-blue-500">
+            <Button
+              variant="link"
+              size="sm"
+              className="text-blue-500"
+              onClick={addNewTransport}
+              type="button"
+            >
               <Plus /> Add new transport
             </Button>
           </div>
@@ -320,9 +434,6 @@ export default function CruiseSalesForm({
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
-                  ${ADULT_PRICE.toFixed(2)} per adult
-                </p>
               </div>
 
               <div>
@@ -358,9 +469,6 @@ export default function CruiseSalesForm({
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
-                  ${CHILD_PRICE.toFixed(2)} per child above 18 y/o
-                </p>
               </div>
 
               <div>
@@ -396,9 +504,6 @@ export default function CruiseSalesForm({
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
-                  ${INFANT_PRICE.toFixed(2)} per infant
-                </p>
               </div>
 
               <div>
@@ -406,7 +511,9 @@ export default function CruiseSalesForm({
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center">
                       <Briefcase className="w-5 h-5 text-gray-500 mr-2" />
-                      <span className="text-sm text-gray-700">FOC</span>
+                      <span className="text-sm text-gray-700">
+                        FOC ( Free of charge )
+                      </span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <button
@@ -434,9 +541,6 @@ export default function CruiseSalesForm({
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
-                  ${FOC_PRICE.toFixed(2)} per FOC
-                </p>
               </div>
             </div>
           </div>
@@ -485,56 +589,376 @@ export default function CruiseSalesForm({
           </div>
         </div>
 
-        {/* Amount to Pay */}
-        {(formData.adults > 0 ||
-          formData.children > 0 ||
-          formData.infant > 0 ||
-          formData.foc > 0) && (
+        {/* Additional Transports */}
+        {additionalTransports.map((transport) => (
+          <div key={transport.id} className="mb-6">
+            {/* Separator */}
+            <div className="border border-dashed my-6 border-gray-300" />
+
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <Label className="">Transport {transport.id}</Label>
+              <Button
+                variant="link"
+                size="sm"
+                className="text-red-500"
+                onClick={() => removeTransport(transport.id)}
+                type="button"
+              >
+                <Minus className="w-4 h-4" /> Remove
+              </Button>
+            </div>
+
+            <Label className="mb-2">Transport</Label>
+            <div className="relative mb-3">
+              <Select
+                value={transport.transport}
+                onValueChange={(value) =>
+                  updateAdditionalTransport(transport.id, "transport", value)
+                }
+              >
+                <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+                  <SelectValue placeholder="Select a transport" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TRANSPORT_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Bus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="relative">
+                <Select
+                  value={transport.driver}
+                  onValueChange={(value) =>
+                    updateAdditionalTransport(transport.id, "driver", value)
+                  }
+                >
+                  <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+                    <SelectValue placeholder="Assign driver" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DRIVER_OPTIONS.map((driver) => (
+                      <SelectItem key={driver.value} value={driver.value}>
+                        {driver.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+              </div>
+
+              <div className="relative">
+                <Select
+                  value={transport.busId}
+                  onValueChange={(value) =>
+                    updateAdditionalTransport(transport.id, "busId", value)
+                  }
+                >
+                  <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+                    <SelectValue placeholder="Bus ID" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BUS_ID_OPTIONS.map((busId) => (
+                      <SelectItem key={busId.value} value={busId.value}>
+                        {busId.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+              </div>
+            </div>
+
+            {/* Passengers Details */}
+            <div className="mb-3 mt-4">
+              <Label className="mb-2">Passengers Details</Label>
+              <div className="mb-6">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="border border-gray-400 rounded px-3 py-1.5">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center">
+                        <Users className="w-5 h-5 text-gray-500 mr-2" />
+                        <span className="text-sm text-gray-700">Adults</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            decrementAdditionalCounter(transport.id, "adults")
+                          }
+                        >
+                          <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                        </button>
+                        <input
+                          type="number"
+                          value={transport.adults.toString().padStart(2, "0")}
+                          onChange={(e) =>
+                            handleAdditionalCounterChange(
+                              transport.id,
+                              "adults",
+                              e.target.value
+                            )
+                          }
+                          className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          min="0"
+                          max="99"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            incrementAdditionalCounter(transport.id, "adults")
+                          }
+                        >
+                          <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="border border-gray-400 rounded px-3 py-1.5">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center">
+                          <Users className="w-5 h-5 text-gray-500 mr-2" />
+                          <span className="text-sm text-gray-700">
+                            Children
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              decrementAdditionalCounter(
+                                transport.id,
+                                "children"
+                              )
+                            }
+                          >
+                            <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                          </button>
+                          <input
+                            type="number"
+                            value={transport.children
+                              .toString()
+                              .padStart(2, "0")}
+                            onChange={(e) =>
+                              handleAdditionalCounterChange(
+                                transport.id,
+                                "children",
+                                e.target.value
+                              )
+                            }
+                            className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            min="0"
+                            max="99"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              incrementAdditionalCounter(
+                                transport.id,
+                                "children"
+                              )
+                            }
+                          >
+                            <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="border border-gray-400 rounded px-3 py-1.5">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center">
+                          <Baby className="w-5 h-5 text-gray-500 mr-2" />
+                          <span className="text-sm text-gray-700">Infant</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              decrementAdditionalCounter(transport.id, "infant")
+                            }
+                          >
+                            <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                          </button>
+                          <input
+                            type="number"
+                            value={transport.infant.toString().padStart(2, "0")}
+                            onChange={(e) =>
+                              handleAdditionalCounterChange(
+                                transport.id,
+                                "infant",
+                                e.target.value
+                              )
+                            }
+                            className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            min="0"
+                            max="99"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              incrementAdditionalCounter(transport.id, "infant")
+                            }
+                          >
+                            <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="border border-gray-400 rounded px-3 py-1.5">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center">
+                          <Briefcase className="w-5 h-5 text-gray-500 mr-2" />
+                          <span className="text-sm text-gray-700">
+                            FOC (Free of charge)
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              decrementAdditionalCounter(transport.id, "foc")
+                            }
+                          >
+                            <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                          </button>
+                          <input
+                            type="number"
+                            value={transport.foc.toString().padStart(2, "0")}
+                            onChange={(e) =>
+                              handleAdditionalCounterChange(
+                                transport.id,
+                                "foc",
+                                e.target.value
+                              )
+                            }
+                            className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            min="0"
+                            max="99"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              incrementAdditionalCounter(transport.id, "foc")
+                            }
+                          >
+                            <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tourist Guide */}
+            <div className="mb-6">
+              <Label className="mb-2">Tourist Guide</Label>
+              <div className="grid grid-cols-2 items-center gap-3">
+                <div className="relative">
+                  <Select
+                    value={transport.guide}
+                    onValueChange={(value) =>
+                      updateAdditionalTransport(transport.id, "guide", value)
+                    }
+                  >
+                    <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+                      <SelectValue placeholder="Assign a guide" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GUIDE_OPTIONS.map((guide) => (
+                        <SelectItem key={guide.value} value={guide.value}>
+                          {guide.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+                </div>
+                <div className="relative">
+                  <Select
+                    value={transport.extraGuide}
+                    onValueChange={(value) =>
+                      updateAdditionalTransport(
+                        transport.id,
+                        "extraGuide",
+                        value
+                      )
+                    }
+                  >
+                    <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+                      <SelectValue placeholder="Add extra guide" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GUIDE_OPTIONS.map((guide) => (
+                        <SelectItem key={guide.value} value={guide.value}>
+                          {guide.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* Passengers */}
+        {(getTotalPassengers().adults > 0 ||
+          getTotalPassengers().children > 0 ||
+          getTotalPassengers().infant > 0 ||
+          getTotalPassengers().foc > 0) && (
           <div className="mb-6">
             {/* Separator */}
             <div className="border border-dashed my-6 border-gray-300" />
 
             <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Amount to Pay
+              Passengers
             </h3>
             <div className="space-y-2">
-              {formData.adults > 0 && (
+              {getTotalPassengers().adults > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Adults:</span>
                   <span className="text-gray-900 font-medium">
-                    ${ADULT_PRICE.toFixed(2)}x{formData.adults}
+                    {getTotalPassengers().adults.toString().padStart(2, "0")}
                   </span>
                 </div>
               )}
-              {formData.children > 0 && (
+              {getTotalPassengers().children > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Children:</span>
                   <span className="text-gray-900 font-medium">
-                    ${CHILD_PRICE.toFixed(2)}x{formData.children}
+                    {getTotalPassengers().children.toString().padStart(2, "0")}
                   </span>
                 </div>
               )}
-              {formData.infant > 0 && (
+              {getTotalPassengers().foc > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Infant:</span>
+                  <span className="text-gray-600">FOC (Free of charge):</span>
                   <span className="text-gray-900 font-medium">
-                    ${INFANT_PRICE.toFixed(2)}x{formData.infant}
-                  </span>
-                </div>
-              )}
-              {formData.foc > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">FOC:</span>
-                  <span className="text-gray-900 font-medium">
-                    ${FOC_PRICE.toFixed(2)}x{formData.foc}
+                    {getTotalPassengers().foc.toString().padStart(2, "0")}
                   </span>
                 </div>
               )}
               <div className="border-t border-gray-200 pt-2 mt-2">
                 <div className="flex justify-between text-base font-semibold">
-                  <span className="text-gray-900">Total</span>
+                  <span className="text-gray-900">Total Passengers</span>
                   <span className="text-gray-900">
-                    ${calculateTotal().toFixed(2)}
+                    {getTotalPassengers().total.toString().padStart(2, "0")}
                   </span>
                 </div>
               </div>
@@ -547,7 +971,7 @@ export default function CruiseSalesForm({
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4">
           <Button variant="outline" size="default" className="rounded-full">
-            Cancel
+            Reset
           </Button>
           <Button
             size="default"
@@ -555,7 +979,7 @@ export default function CruiseSalesForm({
             onClick={() => console.log("Form Data:", formData)}
             className="bg-blue-500 hover:bg-blue-600 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Continue
+            Submit report and print
           </Button>
         </div>
       </div>
