@@ -72,6 +72,12 @@ export default function DirectSalesForm({
   const [isCardPaymentExpanded, setIsCardPaymentExpanded] =
     React.useState(false);
 
+  // Pricing constants
+  const ADULT_PRICE = 49.0;
+  const CHILD_PRICE = 29.0;
+  const INFANT_PRICE = 0.0;
+  const FOC_PRICE = 0.0;
+
   const incrementCounter = (field: string) => {
     const currentValue = formData[field as keyof FormData] as number;
     onFormDataChange(field as keyof FormData, Math.min(currentValue + 1, 99));
@@ -80,6 +86,15 @@ export default function DirectSalesForm({
   const decrementCounter = (field: string) => {
     const currentValue = formData[field as keyof FormData] as number;
     onFormDataChange(field as keyof FormData, Math.max(currentValue - 1, 0));
+  };
+
+  // Calculate totals
+  const calculateTotal = () => {
+    const adultsTotal = formData.adults * ADULT_PRICE;
+    const childrenTotal = formData.children * CHILD_PRICE;
+    const infantTotal = formData.infant * INFANT_PRICE;
+    const focTotal = formData.foc * FOC_PRICE;
+    return adultsTotal + childrenTotal + infantTotal + focTotal;
   };
 
   const isFormValid = () => {
@@ -312,95 +327,169 @@ export default function DirectSalesForm({
         {/* Passenger Count */}
         <div className="mb-6">
           <div className="grid grid-cols-2 gap-3">
-            <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <Users className="w-5 h-5 text-gray-400 mr-2" />
-                  <span className="text-sm text-gray-700">Adults</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <MinusCircle
-                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
-                    onClick={() => decrementCounter("adults")}
-                  />
-                  <span className="text-sm font-medium w-8 text-center">
-                    {formData.adults.toString().padStart(2, "0")}
-                  </span>
-                  <PlusCircle
-                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
-                    onClick={() => incrementCounter("adults")}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <Users className="w-5 h-5 text-gray-400 mr-2" />
-                  <span className="text-sm text-gray-700">Children</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <MinusCircle
-                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
-                    onClick={() => decrementCounter("children")}
-                  />
-                  <span className="text-sm font-medium w-8 text-center">
-                    {formData.children.toString().padStart(2, "0")}
-                  </span>
-                  <PlusCircle
-                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
-                    onClick={() => incrementCounter("children")}
-                  />
+            <div>
+              <div className="border border-gray-200 rounded-lg px-3 py-2">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center">
+                    <Users className="w-5 h-5 text-gray-400 mr-2" />
+                    <span className="text-sm text-gray-700">Adults</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <MinusCircle
+                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                      onClick={() => decrementCounter("adults")}
+                    />
+                    <span className="text-sm font-medium w-8 text-center bg-gray-200 rounded">
+                      {formData.adults.toString().padStart(2, "0")}
+                    </span>
+                    <PlusCircle
+                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                      onClick={() => incrementCounter("adults")}
+                    />
+                  </div>
                 </div>
               </div>
+              <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
+                ${ADULT_PRICE.toFixed(2)} per adult
+              </p>
             </div>
 
-            <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <Baby className="w-5 h-5 text-gray-400 mr-2" />
-                  <span className="text-sm text-gray-700">Infant</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <MinusCircle
-                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
-                    onClick={() => decrementCounter("infant")}
-                  />
-                  <span className="text-sm font-medium w-8 text-center">
-                    {formData.infant.toString().padStart(2, "0")}
-                  </span>
-                  <PlusCircle
-                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
-                    onClick={() => incrementCounter("infant")}
-                  />
+            <div>
+              <div className="border border-gray-200 rounded-lg px-3 py-2">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center">
+                    <Users className="w-5 h-5 text-gray-400 mr-2" />
+                    <span className="text-sm text-gray-700">Children</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <MinusCircle
+                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                      onClick={() => decrementCounter("children")}
+                    />
+                    <span className="text-sm font-medium w-8 text-center bg-gray-200 rounded">
+                      {formData.children.toString().padStart(2, "0")}
+                    </span>
+                    <PlusCircle
+                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                      onClick={() => incrementCounter("children")}
+                    />
+                  </div>
                 </div>
               </div>
+              <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
+                ${CHILD_PRICE.toFixed(2)} per child above 18 y/o
+              </p>
             </div>
 
-            <div className="border border-gray-200 rounded-lg px-3 h-11 flex items-center">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center">
-                  <Briefcase className="w-5 h-5 text-gray-400 mr-2" />
-                  <span className="text-sm text-gray-700">FOC</span>
+            <div>
+              <div className="border border-gray-200 rounded-lg px-3 py-2">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center">
+                    <Baby className="w-5 h-5 text-gray-400 mr-2" />
+                    <span className="text-sm text-gray-700">Infant</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <MinusCircle
+                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                      onClick={() => decrementCounter("infant")}
+                    />
+                    <span className="text-sm font-medium w-8 text-center bg-gray-200 rounded">
+                      {formData.infant.toString().padStart(2, "0")}
+                    </span>
+                    <PlusCircle
+                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                      onClick={() => incrementCounter("infant")}
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <MinusCircle
-                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
-                    onClick={() => decrementCounter("foc")}
-                  />
-                  <span className="text-sm font-medium w-8 text-center">
-                    {formData.foc.toString().padStart(2, "0")}
+              </div>
+              <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
+                ${INFANT_PRICE.toFixed(2)} per infant
+              </p>
+            </div>
+
+            <div>
+              <div className="border border-gray-200 rounded-lg px-3 py-2">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center">
+                    <Briefcase className="w-5 h-5 text-gray-400 mr-2" />
+                    <span className="text-sm text-gray-700">FOC</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <MinusCircle
+                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                      onClick={() => decrementCounter("foc")}
+                    />
+                    <span className="text-sm font-medium w-8 text-center bg-gray-200 rounded">
+                      {formData.foc.toString().padStart(2, "0")}
+                    </span>
+                    <PlusCircle
+                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                      onClick={() => incrementCounter("foc")}
+                    />
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
+                ${FOC_PRICE.toFixed(2)} per FOC
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Amount to Pay */}
+        {(formData.adults > 0 ||
+          formData.children > 0 ||
+          formData.infant > 0 ||
+          formData.foc > 0) && (
+          <div className="mb-6 border-t border-dashed pt-4">
+            <h3 className="text-sm font-medium text-gray-700 mb-3">
+              Amount to Pay
+            </h3>
+            <div className="space-y-2">
+              {formData.adults > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Adults:</span>
+                  <span className="text-gray-900 font-medium">
+                    ${ADULT_PRICE.toFixed(2)}x{formData.adults}
                   </span>
-                  <PlusCircle
-                    className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
-                    onClick={() => incrementCounter("foc")}
-                  />
+                </div>
+              )}
+              {formData.children > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Children:</span>
+                  <span className="text-gray-900 font-medium">
+                    ${CHILD_PRICE.toFixed(2)}x{formData.children}
+                  </span>
+                </div>
+              )}
+              {formData.infant > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Infant:</span>
+                  <span className="text-gray-900 font-medium">
+                    ${INFANT_PRICE.toFixed(2)}x{formData.infant}
+                  </span>
+                </div>
+              )}
+              {formData.foc > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">FOC:</span>
+                  <span className="text-gray-900 font-medium">
+                    ${FOC_PRICE.toFixed(2)}x{formData.foc}
+                  </span>
+                </div>
+              )}
+              <div className="border-t border-gray-200 pt-2 mt-2">
+                <div className="flex justify-between text-base font-semibold">
+                  <span className="text-gray-900">Total</span>
+                  <span className="text-gray-900">
+                    ${calculateTotal().toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Separator */}
         <div className="border border-dashed my-6" />
