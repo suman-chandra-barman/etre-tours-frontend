@@ -90,96 +90,89 @@ function CruiseTransportInfo({
       <div className="">
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <MapPin className="w-5 h-5 text-blue-600" />
-            <h2 className="text-xl font-semibold text-gray-900">Receipt</h2>
-          </div>
+          <h2 className="text-xl font-semibold text-gray-900">Receipt</h2>
         </div>
 
         {/* Tour Information */}
-        {formData.tour && (
-          <div className="mb-4">
-            <p className="text-sm text-gray-600">Tour</p>
-            <p className="text-base font-medium text-gray-900">
-              {formData.tour}
-            </p>
-          </div>
-        )}
+        <div className="mb-4 flex items-center gap-3 text-sm tracking-widest">
+          <p>Tour : </p>
+          <p>{formData.tour ? formData.tour : "N/A"}</p>
+        </div>
+
+        <div className="mb-4 flex items-center gap-3 text-sm tracking-widest">
+          <p>Guide : </p>
+          <p>{formData.guide ? formData.guide : "N/A"}</p>
+        </div>
 
         {/* Date and Time */}
         <div className="space-y-3 mb-6">
-          {formData.date && (
-            <div className="flex items-start gap-3">
-              <Clock className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-gray-600">Departure Time</p>
-                <p className="text-base font-medium text-gray-900">
-                  {formatDate(formData.date)},{" "}
-                  {formData.departureTime || "--:--"} AM
-                </p>
-              </div>
+          <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3 text-sm tracking-widest">
+              <p>Departure Time : </p>
+              <p>
+                {formData.date ? (
+                  <>
+                    {formatDate(formData.date)},{" "}
+                    {formData.departureTime || "--:--"} AM
+                  </>
+                ) : (
+                  "N/A"
+                )}
+              </p>
             </div>
-          )}
+          </div>
 
-          {formData.returnTime && (
-            <div className="flex items-start gap-3">
-              <Clock className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-gray-600">Return Time</p>
-                <p className="text-base font-medium text-gray-900">
-                  {formatDate(formData.date)}, {formData.returnTime || "--:--"}{" "}
-                  AM
-                </p>
-              </div>
+          <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3 text-sm tracking-widest">
+              <p>Return Time : </p>
+              <p>
+                {formData.date && formData.returnTime
+                  ? `${formatDate(formData.date)}, ${formData.returnTime} AM`
+                  : "N/A"}
+              </p>
             </div>
-          )}
+          </div>
 
-          {calculateDuration() && (
-            <div className="flex items-start gap-3">
-              <Clock className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-sm text-gray-600">Duration</p>
-                <p className="text-base font-medium text-gray-900">
-                  {calculateDuration()}
-                </p>
-              </div>
+          <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3 text-sm tracking-widest">
+              <p>Duration : </p>
+              <p>{calculateDuration() || "N/A"}</p>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Transport Details */}
         <div className="border-t border-gray-200 pt-6 mb-6">
-          {formData.transport && (
-            <div className="mb-4">
-              <div className="flex items-start gap-3">
-                <Bus className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-sm text-gray-600">Bus</p>
-                  <p className="text-base font-medium text-gray-900">
-                    {formData.driver} - {formData.busId} - {totalPassengers} pax
-                  </p>
-                </div>
-              </div>
+          <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3 text-sm tracking-widest">
+              <p>Bus : </p>
+              <p>
+                {formData.transport
+                  ? `${formData.driver} - ${formData.busId} - ${
+                      formData.adults +
+                      formData.children +
+                      formData.infant +
+                      formData.foc
+                    } pax`
+                  : "N/A"}
+              </p>
             </div>
-          )}
+          </div>
 
           {/* Additional Transports */}
           {additionalTransports &&
             additionalTransports.map((transport, index) => (
-              <div key={transport.id} className="mb-4">
-                <div className="flex items-start gap-3">
-                  <Bus className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-600">Bus{index + 2}</p>
-                    <p className="text-base font-medium text-gray-900">
-                      {transport.driver} - {transport.busId} -{" "}
-                      {transport.adults +
-                        transport.children +
-                        transport.infant +
-                        transport.foc}{" "}
-                      pax
-                    </p>
-                  </div>
+              <div key={transport.id} className="flex items-start gap-3">
+                <div className="flex items-center gap-3 text-sm tracking-widest">
+                  <p>Bus{index + 2} : </p>
+                  <p>
+                    {transport.driver} - {transport.busId} -{" "}
+                    {transport.adults +
+                      transport.children +
+                      transport.infant +
+                      transport.foc}{" "}
+                    pax
+                  </p>
                 </div>
               </div>
             ))}
@@ -191,33 +184,27 @@ function CruiseTransportInfo({
             <p className="text-sm text-gray-600 mb-3">Passengers</p>
             <div className="space-y-2 mb-4">
               {totalAdults > 0 && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Adults</span>
-                  <span className="font-medium text-gray-900">
-                    {totalAdults}
-                  </span>
+                <div className="flex items-center gap-3 text-sm">
+                  <p>Adults : </p>
+                  <p>{totalAdults}</p>
                 </div>
               )}
               {totalChildren > 0 && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Children</span>
-                  <span className="font-medium text-gray-900">
-                    {totalChildren}
-                  </span>
+                <div className="flex items-center gap-3 text-sm">
+                  <p>Children : </p>
+                  <p>{totalChildren}</p>
                 </div>
               )}
               {totalInfants > 0 && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Infants</span>
-                  <span className="font-medium text-gray-900">
-                    {totalInfants}
-                  </span>
+                <div className="flex items-center gap-3 text-sm">
+                  <p>Infants : </p>
+                  <p>{totalInfants}</p>
                 </div>
               )}
               {totalFOC > 0 && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">FOC</span>
-                  <span className="font-medium text-gray-900">{totalFOC}</span>
+                <div className="flex items-center gap-3 text-sm">
+                  <p>FOC : </p>
+                  <p>{totalFOC}</p>
                 </div>
               )}
             </div>
