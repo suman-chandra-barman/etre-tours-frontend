@@ -140,7 +140,7 @@ export default function DirectSalesForm({
                 value={formData.date}
                 onChange={(e) => onFormDataChange("date", e.target.value)}
                 required
-                className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                className="pl-10 h-11  border-gray-400 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
             </div>
           </div>
@@ -158,7 +158,7 @@ export default function DirectSalesForm({
                 }
                 required
                 placeholder="Departure Time"
-                className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                className="pl-10 h-11 border-gray-400 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function DirectSalesForm({
                 onChange={(e) => onFormDataChange("returnTime", e.target.value)}
                 required
                 placeholder="Return Time"
-                className="pl-10 h-11 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                className="pl-10 h-11 border-gray-400 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
             </div>
           </div>
@@ -188,7 +188,7 @@ export default function DirectSalesForm({
               value={formData.tour}
               onValueChange={(value) => onFormDataChange("tour", value)}
             >
-              <SelectTrigger className="pl-10 w-full h-11">
+              <SelectTrigger className="pl-10 w-full h-11  border-gray-400">
                 <SelectValue placeholder="Pick a tour spot" />
               </SelectTrigger>
               <SelectContent>
@@ -211,7 +211,7 @@ export default function DirectSalesForm({
               value={formData.transport}
               onValueChange={(value) => onFormDataChange("transport", value)}
             >
-              <SelectTrigger className="pl-10 w-full h-11">
+              <SelectTrigger className="pl-10 w-full h-11 border-gray-400">
                 <SelectValue placeholder="Select a transport" />
               </SelectTrigger>
               <SelectContent>
@@ -231,7 +231,7 @@ export default function DirectSalesForm({
                 value={formData.driver}
                 onValueChange={(value) => onFormDataChange("driver", value)}
               >
-                <SelectTrigger className="pl-10 w-full h-11">
+                <SelectTrigger className="pl-10 w-full h-11 border-gray-400">
                   <SelectValue placeholder="Assign driver" />
                 </SelectTrigger>
                 <SelectContent>
@@ -250,7 +250,7 @@ export default function DirectSalesForm({
                 value={formData.busId}
                 onValueChange={(value) => onFormDataChange("busId", value)}
               >
-                <SelectTrigger className="pl-10 w-full h-11">
+                <SelectTrigger className="pl-10 w-full h-11 border-gray-400">
                   <SelectValue placeholder="Bus ID" />
                 </SelectTrigger>
                 <SelectContent>
@@ -274,7 +274,7 @@ export default function DirectSalesForm({
               value={formData.guide}
               onValueChange={(value) => onFormDataChange("guide", value)}
             >
-              <SelectTrigger className="pl-10 w-full h-11">
+              <SelectTrigger className="pl-10 w-full h-11 border-gray-400">
                 <SelectValue placeholder="Assign a guide" />
               </SelectTrigger>
               <SelectContent>
@@ -290,7 +290,7 @@ export default function DirectSalesForm({
         </div>
 
         {/* Separator */}
-        <div className="border border-dashed my-6" />
+        <div className="border border-dashed my-6 border-gray-300" />
 
         {/* Buyer's Details */}
         <div className="mb-3">
@@ -303,7 +303,7 @@ export default function DirectSalesForm({
                 onChange={(e) => onFormDataChange("fullName", e.target.value)}
                 required
                 placeholder="Enter full name"
-                className="pl-10 h-11"
+                className="pl-10 h-11 border-gray-400"
               />
               <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             </div>
@@ -317,7 +317,7 @@ export default function DirectSalesForm({
                 }
                 required
                 placeholder="Phone number"
-                className="pl-10 h-11"
+                className="pl-10 h-11 border-gray-400"
               />
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             </div>
@@ -328,7 +328,7 @@ export default function DirectSalesForm({
         <div className="mb-6">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <div className="border border-gray-200 rounded-lg px-3 py-2">
+              <div className="border border-gray-400 rounded-lg px-3 py-2">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
                     <Users className="w-5 h-5 text-gray-400 mr-2" />
@@ -355,7 +355,7 @@ export default function DirectSalesForm({
             </div>
 
             <div>
-              <div className="border border-gray-200 rounded-lg px-3 py-2">
+              <div className="border border-gray-400 rounded-lg px-3 py-2">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
                     <Users className="w-5 h-5 text-gray-400 mr-2" />
@@ -382,7 +382,7 @@ export default function DirectSalesForm({
             </div>
 
             <div>
-              <div className="border border-gray-200 rounded-lg px-3 py-2">
+              <div className="border border-gray-400 rounded-lg px-3 py-2">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
                     <Baby className="w-5 h-5 text-gray-400 mr-2" />
@@ -409,7 +409,7 @@ export default function DirectSalesForm({
             </div>
 
             <div>
-              <div className="border border-gray-200 rounded-lg px-3 py-2">
+              <div className="border border-gray-400 rounded px-3 py-2">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
                     <Briefcase className="w-5 h-5 text-gray-400 mr-2" />
@@ -442,7 +442,7 @@ export default function DirectSalesForm({
           formData.children > 0 ||
           formData.infant > 0 ||
           formData.foc > 0) && (
-          <div className="mb-6 border-t border-dashed pt-4">
+          <div className="mb-6 border-t border-dashed pt-4  border-gray-300">
             <h3 className="text-sm font-medium text-gray-700 mb-3">
               Amount to Pay
             </h3>
@@ -492,14 +492,14 @@ export default function DirectSalesForm({
         )}
 
         {/* Separator */}
-        <div className="border border-dashed my-6" />
+        <div className="border border-dashed my-6  border-gray-300" />
 
         {/* Payment Method */}
         <div className="mb-8">
           <Label className="mb-2">Payment Method</Label>
           <div className="space-y-3">
             <div className="relative">
-              <div className={`border rounded-lg transition-colors`}>
+              <div className={`border  border-gray-400 rounded-lg transition-colors`}>
                 <div
                   className="px-3 h-11 flex items-center justify-between cursor-pointer bg-transparent hover:bg-gray-50 rounded-lg"
                   onClick={() => {
@@ -557,7 +557,7 @@ export default function DirectSalesForm({
             </div>
 
             <div
-              className={`border rounded-lg px-3 h-11 flex items-center justify-between cursor-pointer transition-colors`}
+              className={`border border-gray-400 rounded-lg px-3 h-11 flex items-center justify-between cursor-pointer transition-colors`}
               onClick={() => {
                 onFormDataChange("paymentMethod", "cash");
                 setIsCardPaymentExpanded(false);
