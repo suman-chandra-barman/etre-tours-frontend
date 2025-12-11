@@ -41,7 +41,7 @@ function CruiseTransportInfo({
     const [depHour, depMin] = formData.departureTime.split(":").map(Number);
     const [retHour, retMin] = formData.returnTime.split(":").map(Number);
 
-    let depTotalMin = depHour * 60 + depMin;
+    const depTotalMin = depHour * 60 + depMin;
     let retTotalMin = retHour * 60 + retMin;
 
     // Handle day overflow
