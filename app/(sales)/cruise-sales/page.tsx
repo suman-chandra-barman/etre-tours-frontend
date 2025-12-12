@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Header from "@/components/shared/Header";
 import CruiseSalesForm from "@/components/sales/forms/CruiseSalesForm";
-import CruiseTransportInfo from "@/components/sales/CruiseTransportInfo";
+import CruiseTransportInfo from "@/components/sales/transportInfo/CruiseTransportInfo";
 
 interface AdditionalTransport {
   id: number;

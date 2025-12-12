@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import Header from "@/components/shared/Header";
 import PartnerSalesForm from "@/components/sales/forms/PartnerSalesForm";
-import PartnerTransportInfo from "@/components/sales/PartnerTransportInfo";
+import PartnerTransportInfo from "@/components/sales/transportInfo/PartnerTransportInfo";
 import { PartnerSalesFormData } from "@/lib/schemas";
 
 export default function PartnerSalesPage() {

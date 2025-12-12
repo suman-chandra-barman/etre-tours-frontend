@@ -2,7 +2,7 @@
 
 import Header from "@/components/shared/Header";
 import DirectSalesForm from "@/components/sales/forms/DirectSalesForm";
-import TransportInfo from "@/components/sales/DirectTransportInfo";
+import TransportInfo from "@/components/sales/transportInfo/DirectTransportInfo";
 import { DirectSalesFormData } from "@/lib/schemas";
 
 function DirectSalesPage() {
