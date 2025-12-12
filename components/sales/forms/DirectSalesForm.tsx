@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CalendarIcon,
   Clock,
@@ -36,41 +38,52 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface FormData {
-  date: string;
-  departureTime: string;
-  returnTime: string;
-  tour: string;
-  transport: string;
-  driver: string;
-  busId: string;
-  guide: string;
-  fullName: string;
-  phoneNumber: string;
-  adults: number;
-  children: number;
-  infant: number;
-  foc: number;
-  paymentMethod: string;
-  cardType?: string;
-  currency: string;
-}
+import { directSalesSchema, type DirectSalesFormData } from "@/lib/schemas";
 
 interface DirectSalesFormProps {
-  formData: FormData;
-  onFormDataChange: <K extends keyof FormData>(
-    field: K,
-    value: FormData[K]
-  ) => void;
+  onSubmit: (data: DirectSalesFormData) => void;
+  defaultValues?: Partial<DirectSalesFormData>;
 }
 
 export default function DirectSalesForm({
-  formData,
-  onFormDataChange,
+  onSubmit,
+  defaultValues,
 }: DirectSalesFormProps) {
   const [isCardPaymentExpanded, setIsCardPaymentExpanded] =
     React.useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors, isValid },
+    trigger,
+  } = useForm<DirectSalesFormData>({
+    resolver: zodResolver(directSalesSchema),
+    defaultValues: {
+      date: "",
+      departureTime: "",
+      returnTime: "",
+      tour: "",
+      transport: "",
+      driver: "",
+      busId: "",
+      guide: "",
+      fullName: "",
+      phoneNumber: "",
+      adults: 0,
+      children: 0,
+      infant: 0,
+      foc: 0,
+      paymentMethod: "card",
+      currency: "",
+      ...defaultValues,
+    },
+    mode: "onChange",
+  });
+
+  const watchedValues = watch();
 
   // Pricing constants
   const ADULT_PRICE = 49.0;
@@ -78,57 +91,56 @@ export default function DirectSalesForm({
   const INFANT_PRICE = 0.0;
   const FOC_PRICE = 0.0;
 
-  const incrementCounter = (field: string) => {
-    const currentValue = formData[field as keyof FormData] as number;
-    onFormDataChange(field as keyof FormData, Math.min(currentValue + 1, 99));
+  const incrementCounter = (
+    field: keyof Pick<
+      DirectSalesFormData,
+      "adults" | "children" | "infant" | "foc"
+    >
+  ) => {
+    const currentValue = watchedValues[field];
+    setValue(field, Math.min(currentValue + 1, 99) as never);
+    trigger(field);
   };
 
-  const decrementCounter = (field: string) => {
-    const currentValue = formData[field as keyof FormData] as number;
-    onFormDataChange(field as keyof FormData, Math.max(currentValue - 1, 0));
+  const decrementCounter = (
+    field: keyof Pick<
+      DirectSalesFormData,
+      "adults" | "children" | "infant" | "foc"
+    >
+  ) => {
+    const currentValue = watchedValues[field];
+    setValue(field, Math.max(currentValue - 1, 0) as never);
+    trigger(field);
   };
 
-  const handleCounterChange = (field: string, value: string) => {
+  const handleCounterChange = (
+    field: keyof Pick<
+      DirectSalesFormData,
+      "adults" | "children" | "infant" | "foc"
+    >,
+    value: string
+  ) => {
     const numValue = parseInt(value) || 0;
-    onFormDataChange(
-      field as keyof FormData,
-      Math.min(Math.max(numValue, 0), 99)
-    );
+    setValue(field, Math.min(Math.max(numValue, 0), 99) as never);
+    trigger(field);
   };
 
   // Calculate totals
   const calculateTotal = () => {
-    const adultsTotal = formData.adults * ADULT_PRICE;
-    const childrenTotal = formData.children * CHILD_PRICE;
-    const infantTotal = formData.infant * INFANT_PRICE;
-    const focTotal = formData.foc * FOC_PRICE;
+    const adultsTotal = watchedValues.adults * ADULT_PRICE;
+    const childrenTotal = watchedValues.children * CHILD_PRICE;
+    const infantTotal = watchedValues.infant * INFANT_PRICE;
+    const focTotal = watchedValues.foc * FOC_PRICE;
     return adultsTotal + childrenTotal + infantTotal + focTotal;
   };
 
-  const isFormValid = () => {
-    return (
-      formData.date !== "" &&
-      formData.departureTime !== "" &&
-      formData.returnTime !== "" &&
-      formData.tour !== "" &&
-      formData.transport !== "" &&
-      formData.driver !== "" &&
-      formData.busId !== "" &&
-      formData.guide !== "" &&
-      formData.fullName.trim() !== "" &&
-      formData.phoneNumber.trim() !== "" &&
-      (formData.adults > 0 ||
-        formData.children > 0 ||
-        formData.infant > 0 ||
-        formData.foc > 0) &&
-      formData.paymentMethod !== "" &&
-      (formData.paymentMethod === "cash" || formData.currency !== "")
-    );
+  const onFormSubmit = (data: DirectSalesFormData) => {
+    onSubmit(data);
   };
 
   return (
     <div className="flex-1 overflow-y-auto p-8">
-      <div className="max-w-4xl">
+      <form onSubmit={handleSubmit(onFormSubmit)} className="max-w-4xl">
         <h1 className="text-2xl font-semibold text-gray-800 mb-2">
           Pacific Tours Ticket
         </h1>
@@ -145,11 +157,16 @@ export default function DirectSalesForm({
               <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               <Input
                 type="date"
-                value={formData.date}
-                onChange={(e) => onFormDataChange("date", e.target.value)}
-                required
-                className="pl-10 h-11  border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                {...register("date")}
+                className={`pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${
+                  errors.date ? "border-red-500" : ""
+                }`}
               />
+              {errors.date && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.date.message}
+                </p>
+              )}
             </div>
           </div>
           <div className="space-y-2">
@@ -160,14 +177,17 @@ export default function DirectSalesForm({
               <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               <Input
                 type="time"
-                value={formData.departureTime}
-                onChange={(e) =>
-                  onFormDataChange("departureTime", e.target.value)
-                }
-                required
+                {...register("departureTime")}
                 placeholder="Departure Time"
-                className="pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                className={`pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${
+                  errors.departureTime ? "border-red-500" : ""
+                }`}
               />
+              {errors.departureTime && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.departureTime.message}
+                </p>
+              )}
             </div>
           </div>
           <div className="space-y-2">
@@ -178,12 +198,17 @@ export default function DirectSalesForm({
               <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               <Input
                 type="time"
-                value={formData.returnTime}
-                onChange={(e) => onFormDataChange("returnTime", e.target.value)}
-                required
+                {...register("returnTime")}
                 placeholder="Return Time"
-                className="pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                className={`pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${
+                  errors.returnTime ? "border-red-500" : ""
+                }`}
               />
+              {errors.returnTime && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.returnTime.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -193,10 +218,17 @@ export default function DirectSalesForm({
           <Label className="mb-2">Tour Details</Label>
           <div className="relative">
             <Select
-              value={formData.tour}
-              onValueChange={(value) => onFormDataChange("tour", value)}
+              value={watchedValues.tour}
+              onValueChange={(value) => {
+                setValue("tour", value);
+                trigger("tour");
+              }}
             >
-              <SelectTrigger className="pl-10 w-full h-11  border-gray-400 rounded">
+              <SelectTrigger
+                className={`pl-10 w-full h-11 border-gray-400 rounded ${
+                  errors.tour ? "border-red-500" : ""
+                }`}
+              >
                 <SelectValue placeholder="Pick a tour spot" />
               </SelectTrigger>
               <SelectContent>
@@ -208,6 +240,9 @@ export default function DirectSalesForm({
               </SelectContent>
             </Select>
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+            {errors.tour && (
+              <p className="text-red-500 text-xs mt-1">{errors.tour.message}</p>
+            )}
           </div>
         </div>
 
@@ -216,10 +251,17 @@ export default function DirectSalesForm({
           <Label className="mb-2">Transport Details</Label>
           <div className="relative mb-3">
             <Select
-              value={formData.transport}
-              onValueChange={(value) => onFormDataChange("transport", value)}
+              value={watchedValues.transport}
+              onValueChange={(value) => {
+                setValue("transport", value);
+                trigger("transport");
+              }}
             >
-              <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+              <SelectTrigger
+                className={`pl-10 w-full h-11 border-gray-400 rounded ${
+                  errors.transport ? "border-red-500" : ""
+                }`}
+              >
                 <SelectValue placeholder="Select a transport" />
               </SelectTrigger>
               <SelectContent>
@@ -231,15 +273,27 @@ export default function DirectSalesForm({
               </SelectContent>
             </Select>
             <Bus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+            {errors.transport && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.transport.message}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="relative">
               <Select
-                value={formData.driver}
-                onValueChange={(value) => onFormDataChange("driver", value)}
+                value={watchedValues.driver}
+                onValueChange={(value) => {
+                  setValue("driver", value);
+                  trigger("driver");
+                }}
               >
-                <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+                <SelectTrigger
+                  className={`pl-10 w-full h-11 border-gray-400 rounded ${
+                    errors.driver ? "border-red-500" : ""
+                  }`}
+                >
                   <SelectValue placeholder="Assign driver" />
                 </SelectTrigger>
                 <SelectContent>
@@ -251,14 +305,26 @@ export default function DirectSalesForm({
                 </SelectContent>
               </Select>
               <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+              {errors.driver && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.driver.message}
+                </p>
+              )}
             </div>
 
             <div className="relative">
               <Select
-                value={formData.busId}
-                onValueChange={(value) => onFormDataChange("busId", value)}
+                value={watchedValues.busId}
+                onValueChange={(value) => {
+                  setValue("busId", value);
+                  trigger("busId");
+                }}
               >
-                <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+                <SelectTrigger
+                  className={`pl-10 w-full h-11 border-gray-400 rounded ${
+                    errors.busId ? "border-red-500" : ""
+                  }`}
+                >
                   <SelectValue placeholder="Bus ID" />
                 </SelectTrigger>
                 <SelectContent>
@@ -270,6 +336,11 @@ export default function DirectSalesForm({
                 </SelectContent>
               </Select>
               <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+              {errors.busId && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.busId.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -279,10 +350,17 @@ export default function DirectSalesForm({
           <Label className="mb-2">Tourist Guide</Label>
           <div className="relative">
             <Select
-              value={formData.guide}
-              onValueChange={(value) => onFormDataChange("guide", value)}
+              value={watchedValues.guide}
+              onValueChange={(value) => {
+                setValue("guide", value);
+                trigger("guide");
+              }}
             >
-              <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
+              <SelectTrigger
+                className={`pl-10 w-full h-11 border-gray-400 rounded ${
+                  errors.guide ? "border-red-500" : ""
+                }`}
+              >
                 <SelectValue placeholder="Assign a guide" />
               </SelectTrigger>
               <SelectContent>
@@ -294,6 +372,11 @@ export default function DirectSalesForm({
               </SelectContent>
             </Select>
             <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
+            {errors.guide && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.guide.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -307,27 +390,35 @@ export default function DirectSalesForm({
             <div className="relative">
               <Input
                 type="text"
-                value={formData.fullName}
-                onChange={(e) => onFormDataChange("fullName", e.target.value)}
-                required
+                {...register("fullName")}
                 placeholder="Enter full name"
-                className="pl-10 h-11 border-gray-400 rounded"
+                className={`pl-10 h-11 border-gray-400 rounded ${
+                  errors.fullName ? "border-red-500" : ""
+                }`}
               />
               <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              {errors.fullName && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.fullName.message}
+                </p>
+              )}
             </div>
 
             <div className="relative">
               <Input
                 type="tel"
-                value={formData.phoneNumber}
-                onChange={(e) =>
-                  onFormDataChange("phoneNumber", e.target.value)
-                }
-                required
+                {...register("phoneNumber")}
                 placeholder="Phone number"
-                className="pl-10 h-11 border-gray-400 rounded"
+                className={`pl-10 h-11 border-gray-400 rounded ${
+                  errors.phoneNumber ? "border-red-500" : ""
+                }`}
               />
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              {errors.phoneNumber && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -336,7 +427,11 @@ export default function DirectSalesForm({
         <div className="mb-6">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <div className="border border-gray-400 rounded px-3 py-1.5">
+              <div
+                className={`border rounded px-3 py-1.5 ${
+                  errors.adults ? "border-red-500" : "border-gray-400"
+                }`}
+              >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
                     <Users className="w-5 h-5 text-gray-500 mr-2" />
@@ -351,7 +446,7 @@ export default function DirectSalesForm({
                     </button>
                     <input
                       type="number"
-                      value={formData.adults.toString().padStart(2, "0")}
+                      value={watchedValues.adults.toString().padStart(2, "0")}
                       onChange={(e) =>
                         handleCounterChange("adults", e.target.value)
                       }
@@ -371,10 +466,19 @@ export default function DirectSalesForm({
               <p className="text-xs text-gray-500 mt-1.5 pl-0.5">
                 ${ADULT_PRICE.toFixed(2)} per adult
               </p>
+              {errors.adults && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.adults.message}
+                </p>
+              )}
             </div>
 
             <div>
-              <div className="border border-gray-400 rounded px-3 py-1.5">
+              <div
+                className={`border rounded px-3 py-1.5 ${
+                  errors.children ? "border-red-500" : "border-gray-400"
+                }`}
+              >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
                     <Users className="w-5 h-5 text-gray-500 mr-2" />
@@ -389,7 +493,7 @@ export default function DirectSalesForm({
                     </button>
                     <input
                       type="number"
-                      value={formData.children.toString().padStart(2, "0")}
+                      value={watchedValues.children.toString().padStart(2, "0")}
                       onChange={(e) =>
                         handleCounterChange("children", e.target.value)
                       }
@@ -412,7 +516,11 @@ export default function DirectSalesForm({
             </div>
 
             <div>
-              <div className="border border-gray-400 rounded px-3 py-1.5">
+              <div
+                className={`border rounded px-3 py-1.5 ${
+                  errors.infant ? "border-red-500" : "border-gray-400"
+                }`}
+              >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
                     <Baby className="w-5 h-5 text-gray-500 mr-2" />
@@ -427,7 +535,7 @@ export default function DirectSalesForm({
                     </button>
                     <input
                       type="number"
-                      value={formData.infant.toString().padStart(2, "0")}
+                      value={watchedValues.infant.toString().padStart(2, "0")}
                       onChange={(e) =>
                         handleCounterChange("infant", e.target.value)
                       }
@@ -450,7 +558,11 @@ export default function DirectSalesForm({
             </div>
 
             <div>
-              <div className="border border-gray-400 rounded px-3 py-1.5">
+              <div
+                className={`border rounded px-3 py-1.5 ${
+                  errors.foc ? "border-red-500" : "border-gray-400"
+                }`}
+              >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
                     <Briefcase className="w-5 h-5 text-gray-500 mr-2" />
@@ -465,7 +577,7 @@ export default function DirectSalesForm({
                     </button>
                     <input
                       type="number"
-                      value={formData.foc.toString().padStart(2, "0")}
+                      value={watchedValues.foc.toString().padStart(2, "0")}
                       onChange={(e) =>
                         handleCounterChange("foc", e.target.value)
                       }
@@ -490,44 +602,44 @@ export default function DirectSalesForm({
         </div>
 
         {/* Amount to Pay */}
-        {(formData.adults > 0 ||
-          formData.children > 0 ||
-          formData.infant > 0 ||
-          formData.foc > 0) && (
-          <div className="mb-6 border-t border-dashed pt-4  border-gray-300">
+        {(watchedValues.adults > 0 ||
+          watchedValues.children > 0 ||
+          watchedValues.infant > 0 ||
+          watchedValues.foc > 0) && (
+          <div className="mb-6 border-t border-dashed pt-4 border-gray-300">
             <h3 className="text-sm font-medium text-gray-700 mb-3">
               Amount to Pay
             </h3>
             <div className="space-y-2">
-              {formData.adults > 0 && (
+              {watchedValues.adults > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Adults:</span>
                   <span className="text-gray-900 font-medium">
-                    ${ADULT_PRICE.toFixed(2)}x{formData.adults}
+                    ${ADULT_PRICE.toFixed(2)}x{watchedValues.adults}
                   </span>
                 </div>
               )}
-              {formData.children > 0 && (
+              {watchedValues.children > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Children:</span>
                   <span className="text-gray-900 font-medium">
-                    ${CHILD_PRICE.toFixed(2)}x{formData.children}
+                    ${CHILD_PRICE.toFixed(2)}x{watchedValues.children}
                   </span>
                 </div>
               )}
-              {formData.infant > 0 && (
+              {watchedValues.infant > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Infant:</span>
                   <span className="text-gray-900 font-medium">
-                    ${INFANT_PRICE.toFixed(2)}x{formData.infant}
+                    ${INFANT_PRICE.toFixed(2)}x{watchedValues.infant}
                   </span>
                 </div>
               )}
-              {formData.foc > 0 && (
+              {watchedValues.foc > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">FOC:</span>
                   <span className="text-gray-900 font-medium">
-                    ${FOC_PRICE.toFixed(2)}x{formData.foc}
+                    ${FOC_PRICE.toFixed(2)}x{watchedValues.foc}
                   </span>
                 </div>
               )}
@@ -544,7 +656,7 @@ export default function DirectSalesForm({
         )}
 
         {/* Separator */}
-        <div className="border border-dashed my-6  border-gray-300" />
+        <div className="border border-dashed my-6 border-gray-300" />
 
         {/* Payment Method */}
         <div className="mb-8">
@@ -552,27 +664,34 @@ export default function DirectSalesForm({
           <div className="space-y-3">
             <div className="relative">
               <div
-                className={`border  border-gray-400 rounded transition-colors`}
+                className={`border border-gray-400 rounded transition-colors ${
+                  errors.paymentMethod || errors.currency
+                    ? "border-red-500"
+                    : ""
+                }`}
               >
                 <div
                   className="px-3 h-11 flex items-center justify-between cursor-pointer bg-transparent hover:bg-gray-50 rounded-lg"
                   onClick={() => {
+                    setValue("paymentMethod", "card");
                     setIsCardPaymentExpanded(!isCardPaymentExpanded);
-                    onFormDataChange("paymentMethod", "card");
+                    trigger("paymentMethod");
                   }}
                 >
                   <div className="flex items-center">
                     <CreditCard className="w-4 h-4 mr-2 text-muted-foreground" />
                     <span
                       className={`text-sm ${
-                        formData.currency && formData.paymentMethod === "card"
+                        watchedValues.currency &&
+                        watchedValues.paymentMethod === "card"
                           ? "text-gray-900"
                           : "text-gray-700"
                       }`}
                     >
-                      {formData.currency && formData.paymentMethod === "card"
+                      {watchedValues.currency &&
+                      watchedValues.paymentMethod === "card"
                         ? CURRENCY_OPTIONS.find(
-                            (c) => c.value === formData.currency
+                            (c) => c.value === watchedValues.currency
                           )?.label
                         : "Card Payment"}
                     </span>
@@ -591,30 +710,39 @@ export default function DirectSalesForm({
                     <div
                       key={currency.value}
                       className={`px-3 h-10 flex items-center justify-between cursor-pointer hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${
-                        formData.currency === currency.value
+                        watchedValues.currency === currency.value
                           ? "bg-blue-50 text-blue-600"
                           : ""
                       }`}
                       onClick={() => {
-                        onFormDataChange("currency", currency.value);
+                        setValue("currency", currency.value);
                         setIsCardPaymentExpanded(false);
+                        trigger("currency");
                       }}
                     >
                       <span className="text-sm">{currency.label}</span>
-                      {formData.currency === currency.value && (
+                      {watchedValues.currency === currency.value && (
                         <Check className="w-4 h-4 text-blue-600" />
                       )}
                     </div>
                   ))}
                 </div>
               )}
+              {(errors.paymentMethod || errors.currency) && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.paymentMethod?.message || errors.currency?.message}
+                </p>
+              )}
             </div>
 
             <div
-              className={`border border-gray-400 rounded px-3 h-11 flex items-center justify-between cursor-pointer transition-colors`}
+              className={`border border-gray-400 rounded px-3 h-11 flex items-center justify-between cursor-pointer transition-colors ${
+                errors.paymentMethod ? "border-red-500" : ""
+              }`}
               onClick={() => {
-                onFormDataChange("paymentMethod", "cash");
+                setValue("paymentMethod", "cash");
                 setIsCardPaymentExpanded(false);
+                trigger("paymentMethod");
               }}
             >
               <div className="flex items-center">
@@ -623,12 +751,12 @@ export default function DirectSalesForm({
               </div>
               <div
                 className={`w-4.5 h-4.5 rounded-full border-2 flex items-center justify-center ${
-                  formData.paymentMethod === "cash"
+                  watchedValues.paymentMethod === "cash"
                     ? "border-blue-500"
                     : "border-gray-300"
                 }`}
               >
-                {formData.paymentMethod === "cash" && (
+                {watchedValues.paymentMethod === "cash" && (
                   <div className="w-3 h-3 rounded-full bg-blue-500"></div>
                 )}
               </div>
@@ -638,19 +766,24 @@ export default function DirectSalesForm({
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4">
-          <Button variant="outline" size="default" className="rounded-full">
+          <Button
+            type="button"
+            variant="outline"
+            size="default"
+            className="rounded-full"
+          >
             Cancel
           </Button>
           <Button
+            type="submit"
             size="default"
-            disabled={!isFormValid()}
-            onClick={() => console.log("Form Data:", formData)}
+            disabled={!isValid}
             className="bg-blue-500 hover:bg-blue-600 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Continue
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
