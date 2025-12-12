@@ -8,6 +8,8 @@ import {
   PAYMENT_METHOD_OPTIONS,
   CURRENCY_OPTIONS,
   CARD_TYPE_OPTIONS,
+  PARTNER_OPTIONS,
+  PARTNER_TYPE_OPTIONS,
 } from "@/constants/FormOptions";
 
 // Create union types from the options
@@ -21,6 +23,8 @@ const paymentMethodValues = PAYMENT_METHOD_OPTIONS.map(
 );
 const currencyValues = CURRENCY_OPTIONS.map((option) => option.value);
 const cardTypeValues = CARD_TYPE_OPTIONS.map((option) => option.value);
+const partnerValues = PARTNER_OPTIONS.map((option) => option.value);
+const partnerTypeValues = PARTNER_TYPE_OPTIONS.map((option) => option.value);
 
 export const directSalesSchema = z
   .object({
@@ -81,3 +85,64 @@ export const directSalesSchema = z
   );
 
 export type DirectSalesFormData = z.infer<typeof directSalesSchema>;
+
+export const partnerSalesSchema = z
+  .object({
+    date: z.string().min(1, "Date is required"),
+    time: z.string().min(1, "Time is required"),
+    tour: z.enum(tourValues as [string, ...string[]], {
+      message: "Please select a valid tour",
+    }),
+    transport: z.enum(transportValues as [string, ...string[]], {
+      message: "Please select a valid transport",
+    }),
+    driver: z.enum(driverValues as [string, ...string[]], {
+      message: "Please select a valid driver",
+    }),
+    busId: z.enum(busIdValues as [string, ...string[]], {
+      message: "Please select a valid bus ID",
+    }),
+    guide: z.string().min(1, "Guide is required").trim(),
+    extraGuide: z.string().optional(),
+    adults: z.number().min(0).max(99),
+    children: z.number().min(0).max(99),
+    infant: z.number().min(0).max(99),
+    foc: z.number().min(0).max(99),
+    partner: z.enum(partnerValues as [string, ...string[]], {
+      message: "Please select a valid partner",
+    }),
+    partnerType: z.enum(partnerTypeValues as [string, ...string[]], {
+      message: "Please select a partner type",
+    }),
+    paymentMethod: z.enum(paymentMethodValues as [string, ...string[]], {
+      message: "Please select a payment method",
+    }),
+    currency: z.enum(currencyValues as [string, ...string[]]).optional(),
+  })
+  .refine(
+    (data) => {
+      // At least one passenger type must be greater than 0
+      return (
+        data.adults > 0 || data.children > 0 || data.infant > 0 || data.foc > 0
+      );
+    },
+    {
+      message: "At least one passenger is required",
+      path: ["adults"],
+    }
+  )
+  .refine(
+    (data) => {
+      // If payment method is card, currency is required
+      if (data.paymentMethod === "card") {
+        return data.currency && data.currency.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Currency is required for card payments",
+      path: ["currency"],
+    }
+  );
+
+export type PartnerSalesFormData = z.infer<typeof partnerSalesSchema>;

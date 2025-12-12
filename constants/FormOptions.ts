@@ -39,6 +39,8 @@ export const GUIDE_OPTIONS = [
 export const PAYMENT_METHOD_OPTIONS = [
   { value: "card", label: "Card Payment" },
   { value: "cash", label: "Cash" },
+  { value: "bankTransfer", label: "Bank Transfer" },
+  { value: "cheque", label: "Cheque" },
 ] as const;
 
 export const CARD_TYPE_OPTIONS = [
@@ -55,3 +57,16 @@ export const CURRENCY_OPTIONS = [
   { value: "EUR", label: "Euro" },
 ] as const;
 
+export const PARTNER_OPTIONS = [
+  { value: "ocean-view-hotel", label: "Ocean View Hotel (Hotel Partner)" },
+  { value: "sunset-resort", label: "Sunset Resort (Hotel Partner)" },
+  { value: "island-travel", label: "Island Travel (Travel Agency)" },
+  { value: "pacific-tours", label: "Pacific Tours (Tour Operator)" },
+] as const;
+
+export const PARTNER_TYPE_OPTIONS = [
+  { value: "hotel", label: "Hotel Partner" },
+  { value: "travel-agency", label: "Travel Agency" },
+  { value: "tour-operator", label: "Tour Operator" },
+  { value: "other", label: "Other" },
+] as const;
