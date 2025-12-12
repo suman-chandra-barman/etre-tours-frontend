@@ -102,12 +102,6 @@ export default function PartnerSalesForm({
     return () => clearTimeout(timer);
   }, [watchedValues, onFormDataChange]);
 
-  // Pricing constants
-  const ADULT_PRICE = 40.0;
-  const CHILD_PRICE = 20.0;
-  const INFANT_PRICE = 0.0;
-  const FOC_PRICE = 0.0;
-
   const incrementCounter = (
     field: keyof Pick<
       PartnerSalesFormData,
@@ -142,15 +136,6 @@ export default function PartnerSalesForm({
     trigger(field);
   };
 
-  // Calculate totals
-  const calculateTotal = () => {
-    const adultsTotal = watchedValues.adults * ADULT_PRICE;
-    const childrenTotal = watchedValues.children * CHILD_PRICE;
-    const infantTotal = watchedValues.infant * INFANT_PRICE;
-    const focTotal = watchedValues.foc * FOC_PRICE;
-    return adultsTotal + childrenTotal + infantTotal + focTotal;
-  };
-
   const onFormSubmit = (data: PartnerSalesFormData) => {
     onSubmit(data);
   };
@@ -161,10 +146,6 @@ export default function PartnerSalesForm({
         <h1 className="text-2xl font-semibold text-gray-800 mb-2">
           Partner sales
         </h1>
-        <p className="text-sm max-w-xs text-gray-500 mb-8">
-          Create reservation for partner bookings and commission details.
-        </p>
-
         {/* Reservation Date and Time */}
         <div className="mb-6">
           <div className="grid grid-cols-2 gap-3">
@@ -615,47 +596,6 @@ export default function PartnerSalesForm({
 
         {/* Separator */}
         <div className="border border-dashed my-6 border-gray-300" />
-
-        {/* Amount to Pay */}
-        {(watchedValues.adults > 0 ||
-          watchedValues.children > 0 ||
-          watchedValues.infant > 0 ||
-          watchedValues.foc > 0) && (
-          <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Unit Price: ${ADULT_PRICE.toFixed(2)} (Adults), $
-              {CHILD_PRICE.toFixed(2)} (Children)
-            </h3>
-            <div className="space-y-2">
-              {watchedValues.adults > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
-                    Guests: {watchedValues.adults} Adults,{" "}
-                    {watchedValues.children > 0
-                      ? `${watchedValues.children} Children`
-                      : "04 Children"}
-                  </span>
-                </div>
-              )}
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">
-                  FOC:{" "}
-                  {watchedValues.foc > 0
-                    ? watchedValues.foc.toString().padStart(2, "0")
-                    : "01"}
-                </span>
-              </div>
-              <div className="border-t border-gray-200 pt-2 mt-2">
-                <div className="flex justify-between text-base font-semibold">
-                  <span className="text-gray-900">Amount to Pay:</span>
-                  <span className="text-blue-600">
-                    ${calculateTotal().toFixed(2)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Payment Method */}
         <div className="mb-8">
