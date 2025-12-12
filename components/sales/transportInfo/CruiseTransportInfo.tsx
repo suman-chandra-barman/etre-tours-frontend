@@ -1,36 +1,12 @@
-interface FormData {
-  date: string;
-  departureTime: string;
-  returnTime: string;
-  tour: string;
-  transport: string;
-  driver: string;
-  busId: string;
-  guide: string;
-  adults: number;
-  children: number;
-  infant: number;
-  foc: number;
-}
+import { CruiseSalesFormData } from "@/lib/schemas";
 
 interface CruiseTransportInfoProps {
-  formData: FormData;
-  additionalTransports?: Array<{
-    id: number;
-    transport: string;
-    driver: string;
-    busId: string;
-    adults: number;
-    children: number;
-    infant: number;
-    foc: number;
-  }>;
+  formData: Partial<CruiseSalesFormData>;
 }
 
-function CruiseTransportInfo({
-  formData,
-  additionalTransports = [],
-}: CruiseTransportInfoProps) {
+function CruiseTransportInfo({ formData }: CruiseTransportInfoProps) {
+  const additionalTransports = formData.additionalTransports || [];
+
   // Calculate duration in minutes
   const calculateDuration = () => {
     if (!formData.departureTime || !formData.returnTime) return "";
@@ -69,17 +45,17 @@ function CruiseTransportInfo({
 
   // Calculate total passengers
   const totalAdults =
-    formData.adults +
-    (additionalTransports?.reduce((sum, t) => sum + t.adults, 0) || 0);
+    (formData.adults || 0) +
+    (additionalTransports?.reduce((sum, t) => sum + (t.adults || 0), 0) || 0);
   const totalChildren =
-    formData.children +
-    (additionalTransports?.reduce((sum, t) => sum + t.children, 0) || 0);
+    (formData.children || 0) +
+    (additionalTransports?.reduce((sum, t) => sum + (t.children || 0), 0) || 0);
   const totalInfants =
-    formData.infant +
-    (additionalTransports?.reduce((sum, t) => sum + t.infant, 0) || 0);
+    (formData.infant || 0) +
+    (additionalTransports?.reduce((sum, t) => sum + (t.infant || 0), 0) || 0);
   const totalFOC =
-    formData.foc +
-    (additionalTransports?.reduce((sum, t) => sum + t.foc, 0) || 0);
+    (formData.foc || 0) +
+    (additionalTransports?.reduce((sum, t) => sum + (t.foc || 0), 0) || 0);
   const totalPassengers = totalAdults + totalChildren + totalInfants + totalFOC;
 
   return (
@@ -146,10 +122,10 @@ function CruiseTransportInfo({
               <p>
                 {formData.transport
                   ? `${formData.driver} - ${formData.busId} - ${
-                      formData.adults +
-                      formData.children +
-                      formData.infant +
-                      formData.foc
+                      (formData.adults || 0) +
+                      (formData.children || 0) +
+                      (formData.infant || 0) +
+                      (formData.foc || 0)
                     } pax`
                   : "N/A"}
               </p>
@@ -164,10 +140,10 @@ function CruiseTransportInfo({
                   <p>Bus{index + 2} : </p>
                   <p>
                     {transport.driver} - {transport.busId} -{" "}
-                    {transport.adults +
-                      transport.children +
-                      transport.infant +
-                      transport.foc}{" "}
+                    {(transport.adults || 0) +
+                      (transport.children || 0) +
+                      (transport.infant || 0) +
+                      (transport.foc || 0)}{" "}
                     pax
                   </p>
                 </div>

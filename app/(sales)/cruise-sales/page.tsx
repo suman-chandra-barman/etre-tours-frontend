@@ -4,52 +4,17 @@ import { useState } from "react";
 import Header from "@/components/shared/Header";
 import CruiseSalesForm from "@/components/sales/forms/CruiseSalesForm";
 import CruiseTransportInfo from "@/components/sales/transportInfo/CruiseTransportInfo";
-
-interface AdditionalTransport {
-  id: number;
-  transport: string;
-  driver: string;
-  busId: string;
-  adults: number;
-  children: number;
-  infant: number;
-  foc: number;
-  guide: string;
-  extraGuide: string
-}
+import { CruiseSalesFormData } from "@/lib/schemas";
 
 function CruiseSalesPage() {
-  const [formData, setFormData] = useState({
-    date: "",
-    departureTime: "",
-    returnTime: "",
-    tour: "",
-    transport: "",
-    driver: "",
-    busId: "",
-    guide: "",
-    fullName: "",
-    phoneNumber: "",
-    adults: 0,
-    children: 0,
-    infant: 0,
-    foc: 0,
-    paymentMethod: "Card Payment",
-    currency: "",
-  });
+  const [currentFormData, setCurrentFormData] = useState<
+    Partial<CruiseSalesFormData>
+  >({});
 
-  const [additionalTransports, setAdditionalTransports] = useState<
-    AdditionalTransport[]
-  >([]);
-
-  const handleInputChange = (field: string, value: string | number) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleAdditionalTransportsChange = (
-    transports: AdditionalTransport[]
-  ) => {
-    setAdditionalTransports(transports);
+  const handleFormSubmit = (data: CruiseSalesFormData) => {
+    console.log("Form submitted with data:", data);
+    // Here you would typically send the data to your backend API
+    // For now, we'll just log it and show a success message
   };
 
   return (
@@ -57,14 +22,10 @@ function CruiseSalesPage() {
       <Header />
       <div className="flex-2 flex overflow-hidden">
         <CruiseSalesForm
-          formData={formData}
-          onFormDataChange={handleInputChange}
-          onAdditionalTransportsChange={handleAdditionalTransportsChange}
+          onSubmit={handleFormSubmit}
+          onFormDataChange={setCurrentFormData}
         />
-        <CruiseTransportInfo
-          formData={formData}
-          additionalTransports={additionalTransports}
-        />
+        <CruiseTransportInfo formData={currentFormData} />
       </div>
     </>
   );

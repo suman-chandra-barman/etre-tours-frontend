@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CalendarIcon,
   Clock,
@@ -32,164 +34,156 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  cruiseSalesSchema,
+  type CruiseSalesFormData,
+  type AdditionalTransport,
+} from "@/lib/schemas";
 
-interface FormData {
-  date: string;
-  departureTime: string;
-  returnTime: string;
-  tour: string;
-  transport: string;
-  driver: string;
-  busId: string;
-  guide: string;
-  fullName: string;
-  phoneNumber: string;
-  adults: number;
-  children: number;
-  infant: number;
-  foc: number;
-  paymentMethod: string;
-  cardType?: string;
-  currency: string;
-}
-
-interface AdditionalTransport {
-  id: number;
-  transport: string;
-  driver: string;
-  busId: string;
-  adults: number;
-  children: number;
-  infant: number;
-  foc: number;
-  guide: string;
-  extraGuide: string;
-}
-
-interface DirectSalesFormProps {
-  formData: FormData;
-  onFormDataChange: <K extends keyof FormData>(
-    field: K,
-    value: FormData[K]
-  ) => void;
-  onAdditionalTransportsChange?: (transports: AdditionalTransport[]) => void;
+interface CruiseSalesFormProps {
+  onSubmit: (data: CruiseSalesFormData) => void;
+  defaultValues?: Partial<CruiseSalesFormData>;
+  onFormDataChange?: (data: Partial<CruiseSalesFormData>) => void;
 }
 
 export default function CruiseSalesForm({
-  formData,
+  onSubmit,
+  defaultValues,
   onFormDataChange,
-  onAdditionalTransportsChange,
-}: DirectSalesFormProps) {
-  const [additionalTransports, setAdditionalTransports] = React.useState<
-    AdditionalTransport[]
-  >([]);
+}: CruiseSalesFormProps) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors, isValid },
+    trigger,
+    reset,
+  } = useForm<CruiseSalesFormData>({
+    resolver: zodResolver(cruiseSalesSchema),
+    defaultValues: {
+      date: "",
+      departureTime: "",
+      returnTime: "",
+      tour: "",
+      transport: "",
+      driver: "",
+      busId: "",
+      guide: "",
+      extraGuide: "",
+      adults: 0,
+      children: 0,
+      infant: 0,
+      foc: 0,
+      additionalTransports: [],
+      ...defaultValues,
+    },
+    mode: "onChange",
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "additionalTransports",
+  });
+
+  const watchedValues = watch();
   const [nextTransportId, setNextTransportId] = React.useState(2);
 
+  // Call onFormDataChange whenever form values change
+  React.useEffect(() => {
+    if (!onFormDataChange) return;
+
+    const subscription = watch((value) => {
+      onFormDataChange(value as Partial<CruiseSalesFormData>);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, onFormDataChange]);
+
   const addNewTransport = () => {
-    const newTransports = [
-      ...additionalTransports,
-      {
-        id: nextTransportId,
-        transport: "",
-        driver: "",
-        busId: "",
-        adults: 0,
-        children: 0,
-        infant: 0,
-        foc: 0,
-        guide: "",
-        extraGuide: "",
-      },
-    ];
-    setAdditionalTransports(newTransports);
-    onAdditionalTransportsChange?.(newTransports);
+    append({
+      id: nextTransportId,
+      transport: "",
+      driver: "",
+      busId: "",
+      adults: 0,
+      children: 0,
+      infant: 0,
+      foc: 0,
+      guide: "",
+      extraGuide: "",
+    });
     setNextTransportId((prev) => prev + 1);
   };
 
-  const removeTransport = (id: number) => {
-    const newTransports = additionalTransports.filter((t) => t.id !== id);
-    setAdditionalTransports(newTransports);
-    onAdditionalTransportsChange?.(newTransports);
-  };
-
-  const updateAdditionalTransport = <K extends keyof AdditionalTransport>(
-    id: number,
-    field: K,
-    value: AdditionalTransport[K]
-  ) => {
-    const newTransports = additionalTransports.map((t) =>
-      t.id === id ? { ...t, [field]: value } : t
-    );
-    setAdditionalTransports(newTransports);
-    onAdditionalTransportsChange?.(newTransports);
+  const removeTransport = (index: number) => {
+    remove(index);
   };
 
   const incrementAdditionalCounter = (
-    id: number,
-    field: keyof AdditionalTransport
+    index: number,
+    field: "adults" | "children" | "infant" | "foc"
   ) => {
-    const transport = additionalTransports.find((t) => t.id === id);
-    if (transport) {
-      const currentValue = transport[field] as number;
-      updateAdditionalTransport(
-        id,
-        field,
-        Math.min(currentValue + 1, 99) as AdditionalTransport[typeof field]
-      );
-    }
+    const currentValue =
+      watchedValues.additionalTransports?.[index]?.[field] || 0;
+    setValue(
+      `additionalTransports.${index}.${field}`,
+      Math.min(currentValue + 1, 99)
+    );
   };
 
   const decrementAdditionalCounter = (
-    id: number,
-    field: keyof AdditionalTransport
+    index: number,
+    field: "adults" | "children" | "infant" | "foc"
   ) => {
-    const transport = additionalTransports.find((t) => t.id === id);
-    if (transport) {
-      const currentValue = transport[field] as number;
-      updateAdditionalTransport(
-        id,
-        field,
-        Math.max(currentValue - 1, 0) as AdditionalTransport[typeof field]
-      );
-    }
+    const currentValue =
+      watchedValues.additionalTransports?.[index]?.[field] || 0;
+    setValue(
+      `additionalTransports.${index}.${field}`,
+      Math.max(currentValue - 1, 0)
+    );
   };
 
   const handleAdditionalCounterChange = (
-    id: number,
-    field: keyof AdditionalTransport,
+    index: number,
+    field: "adults" | "children" | "infant" | "foc",
     value: string
   ) => {
     const numValue = parseInt(value) || 0;
-    updateAdditionalTransport(
-      id,
-      field,
-      Math.min(Math.max(numValue, 0), 99) as AdditionalTransport[typeof field]
+    setValue(
+      `additionalTransports.${index}.${field}`,
+      Math.min(Math.max(numValue, 0), 99)
     );
   };
 
   // Calculate total passengers across all transports
   const getTotalPassengers = () => {
-    const mainAdults = formData.adults;
-    const mainChildren = formData.children;
-    const mainInfant = formData.infant;
-    const mainFoc = formData.foc;
+    const mainAdults = watchedValues.adults || 0;
+    const mainChildren = watchedValues.children || 0;
+    const mainInfant = watchedValues.infant || 0;
+    const mainFoc = watchedValues.foc || 0;
 
-    const additionalAdults = additionalTransports.reduce(
-      (sum, t) => sum + t.adults,
-      0
-    );
-    const additionalChildren = additionalTransports.reduce(
-      (sum, t) => sum + t.children,
-      0
-    );
-    const additionalInfant = additionalTransports.reduce(
-      (sum, t) => sum + t.infant,
-      0
-    );
-    const additionalFoc = additionalTransports.reduce(
-      (sum, t) => sum + t.foc,
-      0
-    );
+    const additionalAdults =
+      watchedValues.additionalTransports?.reduce(
+        (sum, t) => sum + (t.adults || 0),
+        0
+      ) || 0;
+    const additionalChildren =
+      watchedValues.additionalTransports?.reduce(
+        (sum, t) => sum + (t.children || 0),
+        0
+      ) || 0;
+    const additionalInfant =
+      watchedValues.additionalTransports?.reduce(
+        (sum, t) => sum + (t.infant || 0),
+        0
+      ) || 0;
+    const additionalFoc =
+      watchedValues.additionalTransports?.reduce(
+        (sum, t) => sum + (t.foc || 0),
+        0
+      ) || 0;
 
     return {
       adults: mainAdults + additionalAdults,
@@ -208,43 +202,36 @@ export default function CruiseSalesForm({
     };
   };
 
-  const incrementCounter = (field: string) => {
-    const currentValue = formData[field as keyof FormData] as number;
-    onFormDataChange(field as keyof FormData, Math.min(currentValue + 1, 99));
+  const incrementCounter = (
+    field: "adults" | "children" | "infant" | "foc"
+  ) => {
+    const currentValue = watchedValues[field] || 0;
+    setValue(field, Math.min(currentValue + 1, 99));
+    trigger(field);
   };
 
-  const decrementCounter = (field: string) => {
-    const currentValue = formData[field as keyof FormData] as number;
-    onFormDataChange(field as keyof FormData, Math.max(currentValue - 1, 0));
+  const decrementCounter = (
+    field: "adults" | "children" | "infant" | "foc"
+  ) => {
+    const currentValue = watchedValues[field] || 0;
+    setValue(field, Math.max(currentValue - 1, 0));
+    trigger(field);
   };
 
-  const handleCounterChange = (field: string, value: string) => {
+  const handleCounterChange = (
+    field: "adults" | "children" | "infant" | "foc",
+    value: string
+  ) => {
     const numValue = parseInt(value) || 0;
-    onFormDataChange(
-      field as keyof FormData,
-      Math.min(Math.max(numValue, 0), 99)
-    );
-  };
-
-  const isFormValid = () => {
-    return (
-      formData.date !== "" &&
-      formData.departureTime !== "" &&
-      formData.returnTime !== "" &&
-      formData.tour !== "" &&
-      formData.transport !== "" &&
-      formData.driver !== "" &&
-      formData.busId !== "" &&
-      formData.guide !== "" &&
-      (formData.adults > 0 ||
-        formData.children > 0 ||
-        formData.infant > 0 ||
-        formData.foc > 0)
-    );
+    setValue(field, Math.min(Math.max(numValue, 0), 99));
+    trigger(field);
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-8">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex-1 overflow-y-auto p-8"
+    >
       <div className="max-w-4xl">
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">
           Batch Entry
@@ -258,9 +245,7 @@ export default function CruiseSalesForm({
               <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               <Input
                 type="date"
-                value={formData.date}
-                onChange={(e) => onFormDataChange("date", e.target.value)}
-                required
+                {...register("date")}
                 className="pl-10 h-11  border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
             </div>
@@ -273,11 +258,7 @@ export default function CruiseSalesForm({
               <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               <Input
                 type="time"
-                value={formData.departureTime}
-                onChange={(e) =>
-                  onFormDataChange("departureTime", e.target.value)
-                }
-                required
+                {...register("departureTime")}
                 placeholder="Departure Time"
                 className="pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
@@ -291,9 +272,7 @@ export default function CruiseSalesForm({
               <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
               <Input
                 type="time"
-                value={formData.returnTime}
-                onChange={(e) => onFormDataChange("returnTime", e.target.value)}
-                required
+                {...register("returnTime")}
                 placeholder="Return Time"
                 className="pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
@@ -306,8 +285,11 @@ export default function CruiseSalesForm({
           <Label className="mb-2">Tour Details</Label>
           <div className="relative">
             <Select
-              value={formData.tour}
-              onValueChange={(value) => onFormDataChange("tour", value)}
+              value={watchedValues.tour}
+              onValueChange={(value) => {
+                setValue("tour", value);
+                trigger("tour");
+              }}
             >
               <SelectTrigger className="pl-10 w-full h-11  border-gray-400 rounded">
                 <SelectValue placeholder="Pick a tour spot" />
@@ -344,8 +326,11 @@ export default function CruiseSalesForm({
           <Label className="mb-2">Transport</Label>
           <div className="relative mb-3">
             <Select
-              value={formData.transport}
-              onValueChange={(value) => onFormDataChange("transport", value)}
+              value={watchedValues.transport}
+              onValueChange={(value) => {
+                setValue("transport", value);
+                trigger("transport");
+              }}
             >
               <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
                 <SelectValue placeholder="Select a transport" />
@@ -364,8 +349,11 @@ export default function CruiseSalesForm({
           <div className="grid grid-cols-2 gap-3">
             <div className="relative">
               <Select
-                value={formData.driver}
-                onValueChange={(value) => onFormDataChange("driver", value)}
+                value={watchedValues.driver}
+                onValueChange={(value) => {
+                  setValue("driver", value);
+                  trigger("driver");
+                }}
               >
                 <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
                   <SelectValue placeholder="Assign driver" />
@@ -383,8 +371,11 @@ export default function CruiseSalesForm({
 
             <div className="relative">
               <Select
-                value={formData.busId}
-                onValueChange={(value) => onFormDataChange("busId", value)}
+                value={watchedValues.busId}
+                onValueChange={(value) => {
+                  setValue("busId", value);
+                  trigger("busId");
+                }}
               >
                 <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
                   <SelectValue placeholder="Bus ID" />
@@ -425,7 +416,10 @@ export default function CruiseSalesForm({
                       </button>
                       <input
                         type="number"
-                        value={formData.adults.toString().padStart(2, "0")}
+                        value={
+                          watchedValues.adults?.toString().padStart(2, "0") ||
+                          "00"
+                        }
                         onChange={(e) =>
                           handleCounterChange("adults", e.target.value)
                         }
@@ -460,7 +454,10 @@ export default function CruiseSalesForm({
                       </button>
                       <input
                         type="number"
-                        value={formData.children.toString().padStart(2, "0")}
+                        value={
+                          watchedValues.children?.toString().padStart(2, "0") ||
+                          "00"
+                        }
                         onChange={(e) =>
                           handleCounterChange("children", e.target.value)
                         }
@@ -495,7 +492,10 @@ export default function CruiseSalesForm({
                       </button>
                       <input
                         type="number"
-                        value={formData.infant.toString().padStart(2, "0")}
+                        value={
+                          watchedValues.infant?.toString().padStart(2, "0") ||
+                          "00"
+                        }
                         onChange={(e) =>
                           handleCounterChange("infant", e.target.value)
                         }
@@ -532,7 +532,9 @@ export default function CruiseSalesForm({
                       </button>
                       <input
                         type="number"
-                        value={formData.foc.toString().padStart(2, "0")}
+                        value={
+                          watchedValues.foc?.toString().padStart(2, "0") || "00"
+                        }
                         onChange={(e) =>
                           handleCounterChange("foc", e.target.value)
                         }
@@ -560,8 +562,11 @@ export default function CruiseSalesForm({
           <div className="grid grid-cols-2 items-center gap-3">
             <div className="relative">
               <Select
-                value={formData.guide}
-                onValueChange={(value) => onFormDataChange("guide", value)}
+                value={watchedValues.guide}
+                onValueChange={(value) => {
+                  setValue("guide", value);
+                  trigger("guide");
+                }}
               >
                 <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
                   <SelectValue placeholder="Assign a guide" />
@@ -578,8 +583,8 @@ export default function CruiseSalesForm({
             </div>
             <div className="relative">
               <Select
-                value={formData.guide}
-                onValueChange={(value) => onFormDataChange("guide", value)}
+                value={watchedValues.extraGuide || ""}
+                onValueChange={(value) => setValue("extraGuide", value)}
               >
                 <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
                   <SelectValue placeholder="Add extra guide" />
@@ -598,18 +603,18 @@ export default function CruiseSalesForm({
         </div>
 
         {/* Additional Transports */}
-        {additionalTransports.map((transport) => (
-          <div key={transport.id} className="mb-6">
+        {fields.map((field, index) => (
+          <div key={field.id} className="mb-6">
             {/* Separator */}
             <div className="border border-dashed my-6 border-gray-300" />
 
             <div className="flex items-center justify-between gap-2 mb-2">
-              <Label className="">Transport {transport.id}</Label>
+              <Label className="">Transport {index + 2}</Label>
               <Button
                 variant="link"
                 size="sm"
                 className="text-red-500"
-                onClick={() => removeTransport(transport.id)}
+                onClick={() => removeTransport(index)}
                 type="button"
               >
                 <Minus className="w-4 h-4" /> Remove
@@ -619,9 +624,11 @@ export default function CruiseSalesForm({
             <Label className="mb-2">Transport</Label>
             <div className="relative mb-3">
               <Select
-                value={transport.transport}
+                value={
+                  watchedValues.additionalTransports?.[index]?.transport || ""
+                }
                 onValueChange={(value) =>
-                  updateAdditionalTransport(transport.id, "transport", value)
+                  setValue(`additionalTransports.${index}.transport`, value)
                 }
               >
                 <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
@@ -641,9 +648,11 @@ export default function CruiseSalesForm({
             <div className="grid grid-cols-2 gap-3">
               <div className="relative">
                 <Select
-                  value={transport.driver}
+                  value={
+                    watchedValues.additionalTransports?.[index]?.driver || ""
+                  }
                   onValueChange={(value) =>
-                    updateAdditionalTransport(transport.id, "driver", value)
+                    setValue(`additionalTransports.${index}.driver`, value)
                   }
                 >
                   <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
@@ -662,9 +671,11 @@ export default function CruiseSalesForm({
 
               <div className="relative">
                 <Select
-                  value={transport.busId}
+                  value={
+                    watchedValues.additionalTransports?.[index]?.busId || ""
+                  }
                   onValueChange={(value) =>
-                    updateAdditionalTransport(transport.id, "busId", value)
+                    setValue(`additionalTransports.${index}.busId`, value)
                   }
                 >
                   <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
@@ -697,17 +708,22 @@ export default function CruiseSalesForm({
                         <button
                           type="button"
                           onClick={() =>
-                            decrementAdditionalCounter(transport.id, "adults")
+                            decrementAdditionalCounter(index, "adults")
                           }
                         >
                           <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
                         </button>
                         <input
                           type="number"
-                          value={transport.adults.toString().padStart(2, "0")}
+                          value={(
+                            watchedValues.additionalTransports?.[index]
+                              ?.adults || 0
+                          )
+                            .toString()
+                            .padStart(2, "0")}
                           onChange={(e) =>
                             handleAdditionalCounterChange(
-                              transport.id,
+                              index,
                               "adults",
                               e.target.value
                             )
@@ -719,7 +735,7 @@ export default function CruiseSalesForm({
                         <button
                           type="button"
                           onClick={() =>
-                            incrementAdditionalCounter(transport.id, "adults")
+                            incrementAdditionalCounter(index, "adults")
                           }
                         >
                           <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
@@ -741,22 +757,22 @@ export default function CruiseSalesForm({
                           <button
                             type="button"
                             onClick={() =>
-                              decrementAdditionalCounter(
-                                transport.id,
-                                "children"
-                              )
+                              decrementAdditionalCounter(index, "children")
                             }
                           >
                             <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
                           </button>
                           <input
                             type="number"
-                            value={transport.children
+                            value={(
+                              watchedValues.additionalTransports?.[index]
+                                ?.children || 0
+                            )
                               .toString()
                               .padStart(2, "0")}
                             onChange={(e) =>
                               handleAdditionalCounterChange(
-                                transport.id,
+                                index,
                                 "children",
                                 e.target.value
                               )
@@ -768,10 +784,7 @@ export default function CruiseSalesForm({
                           <button
                             type="button"
                             onClick={() =>
-                              incrementAdditionalCounter(
-                                transport.id,
-                                "children"
-                              )
+                              incrementAdditionalCounter(index, "children")
                             }
                           >
                             <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
@@ -792,17 +805,22 @@ export default function CruiseSalesForm({
                           <button
                             type="button"
                             onClick={() =>
-                              decrementAdditionalCounter(transport.id, "infant")
+                              decrementAdditionalCounter(index, "infant")
                             }
                           >
                             <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
                           </button>
                           <input
                             type="number"
-                            value={transport.infant.toString().padStart(2, "0")}
+                            value={(
+                              watchedValues.additionalTransports?.[index]
+                                ?.infant || 0
+                            )
+                              .toString()
+                              .padStart(2, "0")}
                             onChange={(e) =>
                               handleAdditionalCounterChange(
-                                transport.id,
+                                index,
                                 "infant",
                                 e.target.value
                               )
@@ -814,7 +832,7 @@ export default function CruiseSalesForm({
                           <button
                             type="button"
                             onClick={() =>
-                              incrementAdditionalCounter(transport.id, "infant")
+                              incrementAdditionalCounter(index, "infant")
                             }
                           >
                             <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
@@ -837,17 +855,22 @@ export default function CruiseSalesForm({
                           <button
                             type="button"
                             onClick={() =>
-                              decrementAdditionalCounter(transport.id, "foc")
+                              decrementAdditionalCounter(index, "foc")
                             }
                           >
                             <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
                           </button>
                           <input
                             type="number"
-                            value={transport.foc.toString().padStart(2, "0")}
+                            value={(
+                              watchedValues.additionalTransports?.[index]
+                                ?.foc || 0
+                            )
+                              .toString()
+                              .padStart(2, "0")}
                             onChange={(e) =>
                               handleAdditionalCounterChange(
-                                transport.id,
+                                index,
                                 "foc",
                                 e.target.value
                               )
@@ -859,7 +882,7 @@ export default function CruiseSalesForm({
                           <button
                             type="button"
                             onClick={() =>
-                              incrementAdditionalCounter(transport.id, "foc")
+                              incrementAdditionalCounter(index, "foc")
                             }
                           >
                             <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
@@ -878,9 +901,11 @@ export default function CruiseSalesForm({
               <div className="grid grid-cols-2 items-center gap-3">
                 <div className="relative">
                   <Select
-                    value={transport.guide}
+                    value={
+                      watchedValues.additionalTransports?.[index]?.guide || ""
+                    }
                     onValueChange={(value) =>
-                      updateAdditionalTransport(transport.id, "guide", value)
+                      setValue(`additionalTransports.${index}.guide`, value)
                     }
                   >
                     <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
@@ -898,11 +923,13 @@ export default function CruiseSalesForm({
                 </div>
                 <div className="relative">
                   <Select
-                    value={transport.extraGuide}
+                    value={
+                      watchedValues.additionalTransports?.[index]?.extraGuide ||
+                      ""
+                    }
                     onValueChange={(value) =>
-                      updateAdditionalTransport(
-                        transport.id,
-                        "extraGuide",
+                      setValue(
+                        `additionalTransports.${index}.extraGuide`,
                         value
                       )
                     }
@@ -978,19 +1005,25 @@ export default function CruiseSalesForm({
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4">
-          <Button variant="outline" size="default" className="rounded-full">
+          <Button
+            type="button"
+            variant="outline"
+            size="default"
+            className="rounded-full"
+            onClick={() => reset()}
+          >
             Reset
           </Button>
           <Button
+            type="submit"
             size="default"
-            disabled={!isFormValid()}
-            onClick={() => console.log("Form Data:", formData)}
+            disabled={!isValid}
             className="bg-blue-500 hover:bg-blue-600 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Submit report and print
           </Button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

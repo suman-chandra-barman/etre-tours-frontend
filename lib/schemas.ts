@@ -146,3 +146,68 @@ export const partnerSalesSchema = z
   );
 
 export type PartnerSalesFormData = z.infer<typeof partnerSalesSchema>;
+
+// Cruise Sales Schema with additional transport support
+export const additionalTransportSchema = z.object({
+  id: z.number(),
+  transport: z.enum(transportValues as [string, ...string[]], {
+    message: "Please select a valid transport",
+  }),
+  driver: z.enum(driverValues as [string, ...string[]], {
+    message: "Please select a valid driver",
+  }),
+  busId: z.enum(busIdValues as [string, ...string[]], {
+    message: "Please select a valid bus ID",
+  }),
+  adults: z.number().min(0).max(99),
+  children: z.number().min(0).max(99),
+  infant: z.number().min(0).max(99),
+  foc: z.number().min(0).max(99),
+  guide: z.enum(guideValues as [string, ...string[]], {
+    message: "Please select a valid guide",
+  }),
+  extraGuide: z.string().optional(),
+});
+
+export const cruiseSalesSchema = z
+  .object({
+    date: z.string().min(1, "Date is required"),
+    departureTime: z.string().min(1, "Departure time is required"),
+    returnTime: z.string().min(1, "Return time is required"),
+    tour: z.enum(tourValues as [string, ...string[]], {
+      message: "Please select a valid tour",
+    }),
+    transport: z.enum(transportValues as [string, ...string[]], {
+      message: "Please select a valid transport",
+    }),
+    driver: z.enum(driverValues as [string, ...string[]], {
+      message: "Please select a valid driver",
+    }),
+    busId: z.enum(busIdValues as [string, ...string[]], {
+      message: "Please select a valid bus ID",
+    }),
+    guide: z.enum(guideValues as [string, ...string[]], {
+      message: "Please select a valid guide",
+    }),
+    extraGuide: z.string().optional(),
+    adults: z.number().min(0).max(99),
+    children: z.number().min(0).max(99),
+    infant: z.number().min(0).max(99),
+    foc: z.number().min(0).max(99),
+    additionalTransports: z.array(additionalTransportSchema).optional(),
+  })
+  .refine(
+    (data) => {
+      // At least one passenger type must be greater than 0 in main transport
+      return (
+        data.adults > 0 || data.children > 0 || data.infant > 0 || data.foc > 0
+      );
+    },
+    {
+      message: "At least one passenger is required",
+      path: ["adults"],
+    }
+  );
+
+export type CruiseSalesFormData = z.infer<typeof cruiseSalesSchema>;
+export type AdditionalTransport = z.infer<typeof additionalTransportSchema>;
