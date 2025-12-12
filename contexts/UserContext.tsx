@@ -17,7 +17,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     id: "1",
     name: "John Doe",
     email: "john@example.com",
-    role: "cruise-sales",
+    role: "direct-sales",
   });
 
   const role = user?.role || null;

@@ -22,7 +22,7 @@ function DirectSalesPage() {
     infant: 0,
     foc: 0,
     paymentMethod: "Card Payment",
-    currency: "USD",
+    currency: "",
   });
 
   const handleInputChange = (field: string, value: string | number) => {

@@ -88,6 +88,14 @@ export default function DirectSalesForm({
     onFormDataChange(field as keyof FormData, Math.max(currentValue - 1, 0));
   };
 
+  const handleCounterChange = (field: string, value: string) => {
+    const numValue = parseInt(value) || 0;
+    onFormDataChange(
+      field as keyof FormData,
+      Math.min(Math.max(numValue, 0), 99)
+    );
+  };
+
   // Calculate totals
   const calculateTotal = () => {
     const adultsTotal = formData.adults * ADULT_PRICE;
@@ -328,24 +336,35 @@ export default function DirectSalesForm({
         <div className="mb-6">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <div className="border border-gray-400 rounded px-3 py-2">
+              <div className="border border-gray-400 rounded px-3 py-1.5">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
-                    <Users className="w-5 h-5 text-gray-400 mr-2" />
+                    <Users className="w-5 h-5 text-gray-500 mr-2" />
                     <span className="text-sm text-gray-700">Adults</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <MinusCircle
-                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
                       onClick={() => decrementCounter("adults")}
+                    >
+                      <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                    </button>
+                    <input
+                      type="number"
+                      value={formData.adults.toString().padStart(2, "0")}
+                      onChange={(e) =>
+                        handleCounterChange("adults", e.target.value)
+                      }
+                      className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      min="0"
+                      max="99"
                     />
-                    <span className="text-sm font-medium w-8 text-center bg-gray-200 rounded">
-                      {formData.adults.toString().padStart(2, "0")}
-                    </span>
-                    <PlusCircle
-                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                    <button
+                      type="button"
                       onClick={() => incrementCounter("adults")}
-                    />
+                    >
+                      <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -355,24 +374,35 @@ export default function DirectSalesForm({
             </div>
 
             <div>
-              <div className="border border-gray-400 rounded px-3 py-2">
+              <div className="border border-gray-400 rounded px-3 py-1.5">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
-                    <Users className="w-5 h-5 text-gray-400 mr-2" />
+                    <Users className="w-5 h-5 text-gray-500 mr-2" />
                     <span className="text-sm text-gray-700">Children</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <MinusCircle
-                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
                       onClick={() => decrementCounter("children")}
+                    >
+                      <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                    </button>
+                    <input
+                      type="number"
+                      value={formData.children.toString().padStart(2, "0")}
+                      onChange={(e) =>
+                        handleCounterChange("children", e.target.value)
+                      }
+                      className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      min="0"
+                      max="99"
                     />
-                    <span className="text-sm font-medium w-8 text-center bg-gray-200 rounded">
-                      {formData.children.toString().padStart(2, "0")}
-                    </span>
-                    <PlusCircle
-                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                    <button
+                      type="button"
                       onClick={() => incrementCounter("children")}
-                    />
+                    >
+                      <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -382,24 +412,35 @@ export default function DirectSalesForm({
             </div>
 
             <div>
-              <div className="border border-gray-400 rounded px-3 py-2">
+              <div className="border border-gray-400 rounded px-3 py-1.5">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
-                    <Baby className="w-5 h-5 text-gray-400 mr-2" />
+                    <Baby className="w-5 h-5 text-gray-500 mr-2" />
                     <span className="text-sm text-gray-700">Infant</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <MinusCircle
-                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
                       onClick={() => decrementCounter("infant")}
+                    >
+                      <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                    </button>
+                    <input
+                      type="number"
+                      value={formData.infant.toString().padStart(2, "0")}
+                      onChange={(e) =>
+                        handleCounterChange("infant", e.target.value)
+                      }
+                      className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      min="0"
+                      max="99"
                     />
-                    <span className="text-sm font-medium w-8 text-center bg-gray-200 rounded">
-                      {formData.infant.toString().padStart(2, "0")}
-                    </span>
-                    <PlusCircle
-                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                    <button
+                      type="button"
                       onClick={() => incrementCounter("infant")}
-                    />
+                    >
+                      <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -409,24 +450,35 @@ export default function DirectSalesForm({
             </div>
 
             <div>
-              <div className="border border-gray-400 rounded px-3 py-2">
+              <div className="border border-gray-400 rounded px-3 py-1.5">
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center">
-                    <Briefcase className="w-5 h-5 text-gray-400 mr-2" />
+                    <Briefcase className="w-5 h-5 text-gray-500 mr-2" />
                     <span className="text-sm text-gray-700">FOC</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <MinusCircle
-                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
                       onClick={() => decrementCounter("foc")}
+                    >
+                      <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                    </button>
+                    <input
+                      type="number"
+                      value={formData.foc.toString().padStart(2, "0")}
+                      onChange={(e) =>
+                        handleCounterChange("foc", e.target.value)
+                      }
+                      className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      min="0"
+                      max="99"
                     />
-                    <span className="text-sm font-medium w-8 text-center bg-gray-200 rounded">
-                      {formData.foc.toString().padStart(2, "0")}
-                    </span>
-                    <PlusCircle
-                      className="h-4 w-4 rounded-full border-gray-600 cursor-pointer"
+                    <button
+                      type="button"
                       onClick={() => incrementCounter("foc")}
-                    />
+                    >
+                      <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -499,7 +551,9 @@ export default function DirectSalesForm({
           <Label className="mb-2">Payment Method</Label>
           <div className="space-y-3">
             <div className="relative">
-              <div className={`border  border-gray-400 rounded transition-colors`}>
+              <div
+                className={`border  border-gray-400 rounded transition-colors`}
+              >
                 <div
                   className="px-3 h-11 flex items-center justify-between cursor-pointer bg-transparent hover:bg-gray-50 rounded-lg"
                   onClick={() => {

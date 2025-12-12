@@ -1,6 +1,3 @@
-import React from "react";
-import { MapPin, Clock, Users, Bus } from "lucide-react";
-
 interface FormData {
   date: string;
   departureTime: string;

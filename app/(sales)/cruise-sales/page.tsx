@@ -15,7 +15,7 @@ interface AdditionalTransport {
   infant: number;
   foc: number;
   guide: string;
-  extraGuide: string;
+  extraGuide: string
 }
 
 function CruiseSalesPage() {
@@ -35,7 +35,7 @@ function CruiseSalesPage() {
     infant: 0,
     foc: 0,
     paymentMethod: "Card Payment",
-    currency: "USD",
+    currency: "",
   });
 
   const [additionalTransports, setAdditionalTransports] = useState<
