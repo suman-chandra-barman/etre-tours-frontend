@@ -80,12 +80,12 @@ function Sidebar({ role }: SidebarProps) {
     ],
     "partner-sales": [
       {
-        href: "/partner-sales/hotels",
+        href: "/partner-sales",
         label: "Hotels",
         icon: <Hotel className="w-6 h-6 mb-1" />,
       },
       {
-        href: "/partner-sales",
+        href: "/partner-sales/history",
         label: "History",
         icon: <Clock className="w-6 h-6 mb-1" />,
       },
