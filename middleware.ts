@@ -6,7 +6,7 @@ import type { NextRequest } from "next/server";
 function getUserRole(request: NextRequest): string | null {
   // Example: Get role from cookie or session
 //   const userRole = request.cookies.get("userRole")?.value;
-  const userRole = "partner-sales"; // Placeholder: replace with real logic
+  const userRole = "direct-sales"; // Placeholder: replace with real logic
   return userRole || null;
 }
 

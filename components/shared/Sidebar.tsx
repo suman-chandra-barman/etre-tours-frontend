@@ -1,47 +1,39 @@
 "use client";
 
-import {
-  Users,
-  LayoutDashboard,
-  FileText,
-  Settings,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { useUser } from "@/contexts/UserContext";
+import { roleNavLinks } from "@/constants/RoleNavLinks";
+import LogoutModal from "../modals/LogoutModal";
 
-interface NavLink {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-}
+function Sidebar() {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-function AdminSidebar() {
+  const { role, setUser } = useUser();
+
   const pathname = usePathname();
+  const router = useRouter();
 
-  const navLinks: NavLink[] = [
-    {
-      href: "/admin",
-      label: "Dashboard",
-      icon: <LayoutDashboard className="w-6 h-6 mb-1" />,
-    },
-    {
-      href: "/admin/users",
-      label: "Users",
-      icon: <Users className="w-6 h-6 mb-1" />,
-    },
-    {
-      href: "/admin/reports",
-      label: "Reports",
-      icon: <FileText className="w-6 h-6 mb-1" />,
-    },
-    {
-      href: "/admin/settings",
-      label: "Settings",
-      icon: <Settings className="w-6 h-6 mb-1" />,
-    },
-  ];
+  // Determine role based on the current path if role is not set
+  const getRoleFromPath = () => {
+    if (pathname.startsWith("/direct-sales")) return "direct-sales";
+    if (pathname.startsWith("/cruise-sales")) return "cruise-sales";
+    if (pathname.startsWith("/partner-sales")) return "partner-sales";
+    return role || "direct-sales";
+  };
+
+  const currentRole = role || getRoleFromPath();
+
+  const handleLogout = () => {
+    setUser(null);
+    router.push("/login");
+  };
+
+  const navLinks = roleNavLinks[currentRole] || [];
 
   // Check if a link is active
   const isActiveLink = (href: string): boolean => {
@@ -52,7 +44,7 @@ function AdminSidebar() {
     <aside className="w-20 bg-white border-r border-gray-200 flex flex-col items-center py-6 space-y-8">
       {/* Logo */}
       <Link
-        href={`/admin`}
+        href={`/${role}`}
         className="mb-4 transition-opacity hover:opacity-80"
         aria-label="Home"
       >
@@ -90,8 +82,23 @@ function AdminSidebar() {
           );
         })}
       </nav>
+
+      {/* Logout Button */}
+      <div
+        className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-red-500 hover:text-red-600 cursor-pointer"
+        onClick={() => setIsLogoutModalOpen(true)}
+      >
+        <LogOut className="rotate-180" />
+        <span className="text-xs font-medium">Logout</span>
+      </div>
+
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+      />
     </aside>
   );
 }
 
-export default AdminSidebar;
+export default Sidebar;

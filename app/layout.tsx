@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@/contexts/UserContext";
+import Sidebar from "@/components/shared/Sidebar";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -24,7 +25,14 @@ export default function RootLayout({
         className={`${nunito.variable} font-sans antialiased`}
         suppressHydrationWarning={true}
       >
-        <UserProvider>{children}</UserProvider>
+        <UserProvider>
+          <div className="flex h-screen bg-gray-50">
+            <Sidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {children}
+            </div>
+          </div>
+        </UserProvider>
       </body>
     </html>
   );
