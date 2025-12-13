@@ -4,9 +4,6 @@ import {
   Clock,
   Users,
   Hotel,
-  LayoutDashboard,
-  FileText,
-  Settings,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,28 +25,7 @@ function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   // Define role-based navigation links
   const roleNavLinks: Record<UserRole, NavLink[]> = {
-    admin: [
-      {
-        href: "/admin",
-        label: "Dashboard",
-        icon: <LayoutDashboard className="w-6 h-6 mb-1" />,
-      },
-      {
-        href: "/admin/users",
-        label: "Users",
-        icon: <Users className="w-6 h-6 mb-1" />,
-      },
-      {
-        href: "/admin/reports",
-        label: "Reports",
-        icon: <FileText className="w-6 h-6 mb-1" />,
-      },
-      {
-        href: "/admin/settings",
-        label: "Settings",
-        icon: <Settings className="w-6 h-6 mb-1" />,
-      },
-    ],
+    admin: [],
     "direct-sales": [
       {
         href: "/direct-sales",

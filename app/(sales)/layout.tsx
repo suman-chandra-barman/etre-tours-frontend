@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "@/components/shared/Sidebar";
+import SalesSidebar from "@/components/shared/SalesSidebar";
 import { useUser } from "@/contexts/UserContext";
 import React from "react";
 import { usePathname } from "next/navigation";
@@ -25,7 +25,7 @@ export default function SalesLayout({
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar role={currentRole} />
+      <SalesSidebar role={currentRole} />
       <div className="flex-1 flex flex-col overflow-hidden">{children}</div>
     </div>
   );
