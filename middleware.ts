@@ -1,63 +1,105 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// This would typically come from your auth session/cookie
-// For now, we'll simulate it - replace with actual auth logic
-function getUserRole(request: NextRequest): string | null {
+// Constants
+const ROUTES = {
+  LOGIN: "/login",
+  ADMIN: "/admin",
+  CRUISE_SALES: "/cruise-sales",
+  DIRECT_SALES: "/direct-sales",
+  PARTNER_SALES: "/partner-sales",
+} as const;
+
+type UserRole = "admin" | "cruise-sales" | "direct-sales" | "partner-sales";
+
+// Route permissions mapping
+const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
+  [ROUTES.ADMIN]: ["admin"],
+  [ROUTES.CRUISE_SALES]: ["cruise-sales"],
+  [ROUTES.DIRECT_SALES]: ["direct-sales"],
+  [ROUTES.PARTNER_SALES]: ["partner-sales"],
+};
+
+// Role to dashboard mapping
+const ROLE_DASHBOARD_MAP: Record<UserRole, string> = {
+  admin: ROUTES.ADMIN,
+  "cruise-sales": ROUTES.CRUISE_SALES,
+  "direct-sales": ROUTES.DIRECT_SALES,
+  "partner-sales": ROUTES.PARTNER_SALES,
+};
+
+/**
+ * Get user role from request
+ * TODO: Replace with actual auth logic (e.g., JWT verification, session validation)
+ */
+function getUserRole(request: NextRequest): UserRole | null {
   // Example: Get role from cookie or session
-//   const userRole = request.cookies.get("userRole")?.value;
+  // const userRole = request.cookies.get("userRole")?.value;
   const userRole = "direct-sales"; // Placeholder: replace with real logic
-  return userRole || null;
+
+  // Suppress unused variable warning - request will be used when implementing actual auth
+  void request;
+
+  return (userRole as UserRole) || null;
+}
+
+/**
+ * Redirect user to their role-specific dashboard
+ */
+function redirectToDashboard(
+  userRole: UserRole | null,
+  request: NextRequest
+): NextResponse {
+  if (!userRole || !(userRole in ROLE_DASHBOARD_MAP)) {
+    return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+  }
+  return NextResponse.redirect(
+    new URL(ROLE_DASHBOARD_MAP[userRole], request.url)
+  );
+}
+
+/**
+ * Check if user has access to the requested route
+ */
+function hasAccess(pathname: string, userRole: UserRole | null): boolean {
+  const protectedRoute = Object.keys(ROUTE_PERMISSIONS).find((route) =>
+    pathname.startsWith(route)
+  );
+
+  if (!protectedRoute) {
+    return true; // Route is not protected
+  }
+
+  if (!userRole) {
+    return false; // No user role
+  }
+
+  return ROUTE_PERMISSIONS[protectedRoute].includes(userRole);
 }
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Get user role (you'll need to implement actual auth logic here)
   const userRole = getUserRole(request);
 
-  // Define route permissions
-  const routePermissions: Record<string, string[]> = {
-    "/admin": ["admin"],
-    "/cruise-sales": ["cruise-sales"],
-    "/direct-sales": ["direct-sales"],
-    "/partner-sales": ["partner-sales"],
-  };
+  // Handle root route - redirect to role-based dashboard
+  if (pathname === "/") {
+    return redirectToDashboard(userRole, request);
+  }
 
-  // Check if the current path requires protection
-  const protectedRoute = Object.keys(routePermissions).find((route) =>
-    pathname.startsWith(route)
-  );
+  // Check authentication for protected routes
+  if (!userRole) {
+    const protectedRoute = Object.keys(ROUTE_PERMISSIONS).find((route) =>
+      pathname.startsWith(route)
+    );
 
-  if (protectedRoute) {
-    const allowedRoles = routePermissions[protectedRoute];
-
-    // If no user role, redirect to home/login
-    if (!userRole) {
-      return NextResponse.redirect(new URL("/", request.url));
+    if (protectedRoute) {
+      return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
     }
+  }
 
-    // If user doesn't have permission, redirect to their dashboard
-    if (!allowedRoles.includes(userRole)) {
-      let redirectPath = "/";
-
-      switch (userRole) {
-        case "admin":
-          redirectPath = "/admin";
-          break;
-        case "direct-sales":
-          redirectPath = "/direct-sales";
-          break;
-        case "cruise-sales":
-          redirectPath = "/cruise-sales";
-          break;
-        case "partner-sales":
-          redirectPath = "/partner-sales";
-          break;
-      }
-
-      return NextResponse.redirect(new URL(redirectPath, request.url));
-    }
+  // Check authorization for protected routes
+  if (userRole && !hasAccess(pathname, userRole)) {
+    return redirectToDashboard(userRole, request);
   }
 
   return NextResponse.next();
@@ -66,6 +108,7 @@ export function middleware(request: NextRequest) {
 // Configure which routes to run middleware on
 export const config = {
   matcher: [
+    "/",
     "/admin/:path*",
     "/cruise-sales/:path*",
     "/direct-sales/:path*",
