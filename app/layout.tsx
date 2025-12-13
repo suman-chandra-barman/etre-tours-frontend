@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import "./globals.css";
 import { UserProvider } from "@/contexts/UserContext";
 import Sidebar from "@/components/shared/Sidebar";
+import Header from "@/components/shared/Header";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -29,6 +30,7 @@ export default function RootLayout({
           <div className="flex h-screen bg-gray-50">
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
+              <Header />
               {children}
             </div>
           </div>

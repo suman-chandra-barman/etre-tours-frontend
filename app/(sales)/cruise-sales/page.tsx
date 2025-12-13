@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/shared/Header";
 import CruiseSalesForm from "@/components/sales/forms/CruiseSalesForm";
 import CruiseTransportInfo from "@/components/sales/transportInfo/CruiseTransportInfo";
 import { CruiseSalesFormData } from "@/lib/schemas";
@@ -18,16 +17,13 @@ function CruiseSalesPage() {
   };
 
   return (
-    <>
-      <Header />
-      <div className="flex-2 flex overflow-hidden">
-        <CruiseSalesForm
-          onSubmit={handleFormSubmit}
-          onFormDataChange={setCurrentFormData}
-        />
-        <CruiseTransportInfo formData={currentFormData} />
-      </div>
-    </>
+    <div className="flex-2 flex overflow-hidden">
+      <CruiseSalesForm
+        onSubmit={handleFormSubmit}
+        onFormDataChange={setCurrentFormData}
+      />
+      <CruiseTransportInfo formData={currentFormData} />
+    </div>
   );
 }
 
