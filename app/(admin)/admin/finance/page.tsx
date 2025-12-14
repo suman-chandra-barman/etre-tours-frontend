@@ -4,6 +4,7 @@ import { useState } from "react";
 import FinanceTable from "@/components/tables/FinanceTable";
 import InvoicesTable from "@/components/tables/InvoicesTable";
 import VoucherTable from "@/components/tables/VoucherTable";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 type TabType = "finance" | "invoices" | "voucher";
 
@@ -12,6 +13,7 @@ export default function FinancePage() {
 
   return (
     <div className="flex-1 overflow-auto p-8 bg-gray-50">
+      <AdminHeader />
       <div className="space-y-6">
         {/* Tab Navigation */}
         <div className="flex items-center gap-1 border-b border-gray-200">

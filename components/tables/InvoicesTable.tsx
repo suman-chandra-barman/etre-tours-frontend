@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import InvoiceModal from "../modals/InvoiceModal";
 import styles from "@/components/styles/modals/PrintModal.module.css";
+import { StatCard } from "../admin/cards/StatCard";
 
 interface InvoiceItem {
   id: number;
@@ -269,6 +270,16 @@ export default function InvoicesTable() {
 
   return (
     <div className="flex flex-col bg-gray-50">
+
+      <div
+        className={`grid md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 ${styles.noPrint}`}
+      >
+        <StatCard title="Total Amount" value="$6,005" />
+        <StatCard title="Total Invoices" value="1,250" />
+        <StatCard title="Pending" value="50" />
+        <StatCard title="Paid" value="30" />
+      </div>
+
       <div className="flex-1 overflow-auto">
         {/* Header Section */}
         <div

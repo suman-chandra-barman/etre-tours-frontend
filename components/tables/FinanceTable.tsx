@@ -9,6 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import styles from "@/components/styles/modals/PrintModal.module.css";
+import { StatCard } from "../admin/cards/StatCard";
 
 interface FinanceItem {
   id: number;
@@ -204,6 +205,11 @@ export default function FinanceTable() {
 
   return (
     <div className="flex flex-col bg-gray-50">
+      <div className={`grid md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 ${styles.noPrint}`}>
+        <StatCard title="Today’s Sale" value="$6,005" trend={{ value: "+5%", isPositive: true }} />
+        <StatCard title="Direct Sales" value="$45,000" trend={{ value: "20%", isPositive: true }}/>
+        <StatCard title="Cruise Operation" value="$1,250" trend={{ value: "+8%", isPositive: true }} />
+      </div>
       <div className="flex-1 overflow-auto">
         {/* Header Section */}
         <div
@@ -343,7 +349,6 @@ export default function FinanceTable() {
             />
           </div>
         </div>
-
         {/* Table Section */}
         <div
           className={`bg-white rounded-xl border border-gray-200 overflow-hidden ${styles.printArea}`}
