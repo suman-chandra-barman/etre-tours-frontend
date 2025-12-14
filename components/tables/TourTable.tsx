@@ -291,48 +291,6 @@ export default function TourTable() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Print Styles */}
-      <style jsx global>{`
-        @media print {
-          body * {
-            visibility: hidden;
-          }
-
-          .print-area,
-          .print-area * {
-            visibility: visible;
-          }
-
-          .print-area {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-          }
-
-          .no-print {
-            display: none !important;
-          }
-
-          .print-area table {
-            page-break-inside: auto;
-          }
-
-          .print-area tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-          }
-
-          .print-area thead {
-            display: table-header-group;
-          }
-
-          @page {
-            margin: 0.5cm;
-          }
-        }
-      `}</style>
-
       <div className="flex-1 overflow-auto">
         <div className="max-w-[1920px] mx-auto p-6">
           {/* Header Section */}
