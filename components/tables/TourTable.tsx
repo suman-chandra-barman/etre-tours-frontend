@@ -290,13 +290,12 @@ export default function TourTable() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col bg-gray-50">
       <div className="flex-1 overflow-auto">
-        <div className="max-w-[1920px] mx-auto p-6">
           {/* Header Section */}
           <div className="flex items-center justify-between mb-6 no-print">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-semibold text-gray-900">Tours</h1>
+              <h2 className="text-2xl font-semibold text-gray-900">Tours</h2>
             </div>
 
             <button
@@ -309,7 +308,7 @@ export default function TourTable() {
           </div>
 
           {/* Filters Section */}
-          <div className="p-4 mb-4 no-print">
+          <div className="mb-4 no-print">
             <div className="flex items-center justify-between mb-4">
               <div className="flex flex-wrap gap-3">
                 {/* Date Input */}
@@ -575,7 +574,6 @@ export default function TourTable() {
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
