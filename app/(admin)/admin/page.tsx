@@ -1,5 +1,6 @@
 import { StatsGrid } from "@/components/admin/StatsGrid";
 import { TotalRevenue } from "@/components/admin/TotalRevenue";
+import TourTable from "@/components/tables/TourTable";
 
 export default function AdminPage() {
   return (
@@ -14,6 +15,7 @@ export default function AdminPage() {
         </div>
         <StatsGrid />
         <TotalRevenue />
+        <TourTable />
       </div>
     </div>
   );

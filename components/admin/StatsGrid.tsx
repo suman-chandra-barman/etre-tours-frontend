@@ -1,3 +1,5 @@
+"use client";
+
 import { StatCard } from "@/components/admin/cards/StatCard";
 import { DashboardStats, StatCardData } from "@/types/admin";
 import { useEffect, useState } from "react";
