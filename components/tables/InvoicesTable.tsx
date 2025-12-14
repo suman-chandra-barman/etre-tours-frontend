@@ -9,6 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import InvoiceModal from "../modals/InvoiceModal";
+import styles from "@/components/styles/modals/PrintModal.module.css";
 
 interface InvoiceItem {
   id: number;
@@ -270,7 +271,9 @@ export default function InvoicesTable() {
     <div className="flex flex-col bg-gray-50">
       <div className="flex-1 overflow-auto">
         {/* Header Section */}
-        <div className="flex items-center justify-between mb-6 no-print">
+        <div
+          className={`flex items-center justify-between mb-6 ${styles.noPrint}`}
+        >
           <div>
             <h2 className="text-2xl font-semibold text-gray-900">Invoices</h2>
             <p className="text-sm text-gray-600 mt-1">
@@ -287,7 +290,7 @@ export default function InvoicesTable() {
         </div>
 
         {/* Filters Section */}
-        <div className="mb-4 no-print">
+        <div className={`mb-4 ${styles.noPrint}`}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex flex-wrap gap-3">
               {/* Date Input */}
@@ -411,7 +414,9 @@ export default function InvoicesTable() {
         </div>
 
         {/* Table Section */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden print-area">
+        <div
+          className={`bg-white rounded-xl border border-gray-200 overflow-hidden ${styles.printArea}`}
+        >
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -544,7 +549,9 @@ export default function InvoicesTable() {
           </div>
 
           {/* Pagination */}
-          <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between no-print">
+          <div
+            className={`px-4 py-3 border-t border-gray-200 flex items-center justify-between ${styles.noPrint}`}
+          >
             <div className="text-sm text-gray-600">
               Showing {startIndex + 1} to{" "}
               {Math.min(endIndex, filteredData.length)} of {filteredData.length}{" "}
