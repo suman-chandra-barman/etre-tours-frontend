@@ -34,7 +34,7 @@ function PersonalInfoPage() {
   };
 
   return (
-    <div className="flex-1 overflow-auto p-8 bg-gray-50">
+    <div className="flex-1 overflow-auto p-8 bg-gray-50 ">
       <div className="space-y-8">
         <AdminHeader />
 
@@ -48,7 +48,7 @@ function PersonalInfoPage() {
         </Link>
 
         {/* Company Profile Card */}
-        <div className="max-w-xl bg-white rounded p-8">
+        <div className="max-w-xl mx-auto bg-white rounded p-8">
           {/* Logo Section */}
           <div className="space-y-4">
             <div className="rounded-full flex items-center justify-center">

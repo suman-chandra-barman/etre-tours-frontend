@@ -23,7 +23,7 @@ function SettingPage() {
       <div className="space-y-8">
         <AdminHeader />
 
-        <div className="max-w-3xl">
+        <div className="max-w-xl">
           <div className="space-y-3">
             {settingOptions.map((option) => (
               <Link

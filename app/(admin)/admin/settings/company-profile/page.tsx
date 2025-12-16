@@ -48,7 +48,7 @@ function CompanyProfilePage() {
         </Link>
 
         {/* Company Profile Card */}
-        <div className="max-w-xl bg-white rounded p-8">
+        <div className="max-w-xl mx-auto bg-white rounded p-8">
           {/* Logo Section */}
           <div className="space-y-4">
             <div className="rounded-full flex items-center justify-center">
