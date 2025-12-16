@@ -37,15 +37,16 @@ function PersonalInfoPage() {
     <div className="flex-1 overflow-auto p-8 bg-gray-50 ">
       <div className="space-y-8">
         <AdminHeader />
-
         {/* Back Button */}
-        <Link
-          href="/admin/settings"
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back to Settings</span>
-        </Link>
+        <div className="flex items-start">
+          <Link
+            href="/admin/settings"
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Back to Settings</span>
+          </Link>
+        </div>
 
         {/* Company Profile Card */}
         <div className="max-w-xl mx-auto bg-white rounded p-8">

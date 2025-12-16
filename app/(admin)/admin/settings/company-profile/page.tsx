@@ -39,14 +39,15 @@ function CompanyProfilePage() {
         <AdminHeader />
 
         {/* Back Button */}
-        <Link
-          href="/admin/settings"
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">Back to Settings</span>
-        </Link>
-
+        <div className="flex items-start">
+          <Link
+            href="/admin/settings"
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Back to Settings</span>
+          </Link>
+        </div>
         {/* Company Profile Card */}
         <div className="max-w-xl mx-auto bg-white rounded p-8">
           {/* Logo Section */}
