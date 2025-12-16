@@ -23,7 +23,7 @@ export function StatCard({ title, value, trend, badge }: StatCardProps) {
               {title}
             </h3>
             {badge && (
-              <span className="text-xs px-2 py-1 rounded bg-red-50 text-red-600 font-medium">
+              <span className={`text-xs px-2 py-1 rounded font-medium ${badge === "Present" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"}`}>
                 {badge}
               </span>
             )}

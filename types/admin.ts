@@ -27,3 +27,23 @@ export interface StatCardData {
   };
   badge?: string;
 }
+
+export interface Staff {
+  id: string;
+  name: string;
+  role: string;
+  contact: string;
+  secondaryContact: string;
+  email: string;
+  address?: string;
+  hireDate?: string;
+  status?: "active" | "inactive" | "on-leave";
+  employmentType?: "full-time" | "part-time" | "contract";
+}
+
+export interface StaffStats {
+  totalStaff: number;
+  todaysStaff: number;
+  activeStaffs: number;
+  offline: number;
+}

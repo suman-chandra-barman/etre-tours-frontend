@@ -4,6 +4,8 @@ import { useState } from "react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import TransportTable from "@/components/tables/TransportTable";
 import AddTransportModal from "@/components/modals/AddTransportModal";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export default function TransportPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,10 +20,17 @@ export default function TransportPage() {
 
   return (
     <div className="flex-1 overflow-auto p-8 bg-gray-50">
-      <AdminHeader />
-      <div className="mt-6">
-        <TransportTable onAddTransport={() => setIsModalOpen(true)} />
+      <div className="mb-6 flex items-center justify-between no-print">
+        <AdminHeader />
+        <Button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          Add Transport
+        </Button>
       </div>
+      <TransportTable onAddTransport={() => setIsModalOpen(true)} />
 
       <AddTransportModal
         isOpen={isModalOpen}
