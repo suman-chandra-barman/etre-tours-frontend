@@ -109,10 +109,10 @@ export default function TransportTable({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
+    <div className="bg-white rounded-lg shadow print-area">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 no-print">
           <h2 className="text-2xl font-semibold text-gray-900">
             Transport List
           </h2>
@@ -136,7 +136,7 @@ export default function TransportTable({
         </div>
 
         {/* Filters */}
-        <div className="mb-4">
+        <div className="mb-4 no-print">
           <div className="flex items-center justify-between mb-4">
             <div className="flex flex-wrap gap-3">
               {/* Filter Dropdowns */}
@@ -247,7 +247,7 @@ export default function TransportTable({
       </div>
 
       {/* Pagination */}
-      <div className="p-4 border-t border-gray-200 flex items-center justify-end gap-2">
+      <div className="p-4 border-t border-gray-200 flex items-center justify-end gap-2 no-print">
         <button
           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
           disabled={currentPage === 1}
