@@ -288,7 +288,7 @@ export default function AddStaffModal({
           </div>
 
           {/* Footer Buttons */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <div className="flex justify-end gap-3 pt-4 rounded-full">
             <Button
               type="button"
               variant="outline"
@@ -299,7 +299,7 @@ export default function AddStaffModal({
             </Button>
             <Button
               type="submit"
-              className="px-6 bg-blue-600 hover:bg-blue-700 text-white"
+              className="px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full"
             >
               Assign Staff
             </Button>
