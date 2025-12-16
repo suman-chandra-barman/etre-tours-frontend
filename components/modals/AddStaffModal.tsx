@@ -102,14 +102,11 @@ export default function AddStaffModal({
             <div className="grid grid-cols-2 gap-4">
               {/* Name */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Name
-                </Label>
                 <div className="relative">
                   <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                   <Input
                     id="name"
-                    placeholder="Enter name"
+                    placeholder="Name"
                     value={formData.name}
                     onChange={(e) => handleChange("name", e.target.value)}
                     className="pl-10 h-11 border-gray-400 rounded"
@@ -119,14 +116,11 @@ export default function AddStaffModal({
 
               {/* Staff ID */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Staff ID
-                </Label>
                 <div className="relative">
                   <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                   <Input
                     id="staffId"
-                    placeholder="Enter staff ID"
+                    placeholder="Staff ID"
                     value={formData.staffId}
                     onChange={(e) => handleChange("staffId", e.target.value)}
                     className="pl-10 h-11 border-gray-400 rounded"
@@ -135,17 +129,14 @@ export default function AddStaffModal({
               </div>
 
               {/* Role */}
-              <div className="col-span-2 space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Role
-                </Label>
+              <div className="col-span-1 space-y-2">
                 <div className="relative">
                   <Select
                     value={formData.role}
                     onValueChange={(value) => handleChange("role", value)}
                   >
-                    <SelectTrigger className="pl-10 h-11 border-gray-400 rounded">
-                      <SelectValue placeholder="Select role" />
+                    <SelectTrigger className="pl-10 h-11 border-gray-400 rounded w-full">
+                      <SelectValue placeholder="Role" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="guide">Guide</SelectItem>
@@ -160,14 +151,11 @@ export default function AddStaffModal({
 
               {/* Address */}
               <div className="col-span-2 space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Address
-                </Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                   <Input
                     id="address"
-                    placeholder="Enter address"
+                    placeholder="Address"
                     value={formData.address}
                     onChange={(e) => handleChange("address", e.target.value)}
                     className="pl-10 h-11 border-gray-400 rounded"
@@ -177,15 +165,12 @@ export default function AddStaffModal({
 
               {/* Email */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Email
-                </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter email"
+                    placeholder="Email"
                     value={formData.email}
                     onChange={(e) => handleChange("email", e.target.value)}
                     className="pl-10 h-11 border-gray-400 rounded"
@@ -195,15 +180,12 @@ export default function AddStaffModal({
 
               {/* Phone Number */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Phone Number
-                </Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                   <Input
                     id="phoneNumber"
                     type="tel"
-                    placeholder="Enter phone number"
+                    placeholder="Phone Number"
                     value={formData.phoneNumber}
                     onChange={(e) =>
                       handleChange("phoneNumber", e.target.value)
@@ -215,15 +197,12 @@ export default function AddStaffModal({
 
               {/* Secondary Contact */}
               <div className="col-span-2 space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Secondary Contact
-                </Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                   <Input
                     id="secondaryContact"
                     type="tel"
-                    placeholder="Enter secondary contact"
+                    placeholder="Secondary Contact"
                     value={formData.secondaryContact}
                     onChange={(e) =>
                       handleChange("secondaryContact", e.target.value)
@@ -243,16 +222,13 @@ export default function AddStaffModal({
             <div className="grid grid-cols-2 gap-4">
               {/* Status */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Status
-                </Label>
                 <div className="relative">
                   <Select
                     value={formData.status}
                     onValueChange={(value) => handleChange("status", value)}
                   >
-                    <SelectTrigger className="pl-10 h-11 border-gray-400 rounded">
-                      <SelectValue placeholder="Select status" />
+                    <SelectTrigger className="pl-10 h-11 border-gray-400 rounded w-full">
+                      <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="active">Active</SelectItem>
@@ -266,26 +242,29 @@ export default function AddStaffModal({
 
               {/* Hire Date */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Hire Date
-                </Label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none z-10" />
                   <Input
                     id="hireDate"
                     type="date"
                     value={formData.hireDate}
                     onChange={(e) => handleChange("hireDate", e.target.value)}
+                    style={{
+                      colorScheme: formData.hireDate ? "auto" : "light",
+                      color: formData.hireDate ? "inherit" : "transparent",
+                    }}
                     className="pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                   />
+                  {!formData.hireDate && (
+                    <span className="absolute left-10 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-sm">
+                      Hire Date
+                    </span>
+                  )}
                 </div>
               </div>
 
               {/* Employment Type */}
               <div className="col-span-2 space-y-2">
-                <Label className="text-sm font-medium text-gray-700">
-                  Employment Type
-                </Label>
                 <div className="relative">
                   <Select
                     value={formData.employmentType}
@@ -293,8 +272,8 @@ export default function AddStaffModal({
                       handleChange("employmentType", value)
                     }
                   >
-                    <SelectTrigger className="pl-10 h-11 border-gray-400 rounded">
-                      <SelectValue placeholder="Select employment type" />
+                    <SelectTrigger className="pl-10 h-11 border-gray-400 rounded w-full">
+                      <SelectValue placeholder="Employment type" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="full-time">Full Time</SelectItem>
