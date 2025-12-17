@@ -151,17 +151,25 @@ export default function DirectSalesForm({
 
         {/* Date and Time Selection */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">Date</Label>
+          <div>
             <div className="relative">
-              <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none z-10" />
               <Input
                 type="date"
                 {...register("date")}
+                style={{
+                  colorScheme: watchedValues.date ? "auto" : "light",
+                  color: watchedValues.date ? "inherit" : "transparent",
+                }}
                 className={`pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${
                   errors.date ? "border-red-500" : ""
                 }`}
               />
+              {!watchedValues.date && (
+                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-sm">
+                  Date
+                </span>
+              )}
               {errors.date && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors.date.message}
@@ -169,20 +177,27 @@ export default function DirectSalesForm({
               )}
             </div>
           </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">
-              Departure Time
-            </Label>
+          <div>
             <div className="relative">
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none z-10" />
               <Input
                 type="time"
                 {...register("departureTime")}
-                placeholder="Departure Time"
+                style={{
+                  colorScheme: watchedValues.departureTime ? "auto" : "light",
+                  color: watchedValues.departureTime
+                    ? "inherit"
+                    : "transparent",
+                }}
                 className={`pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${
                   errors.departureTime ? "border-red-500" : ""
                 }`}
               />
+              {!watchedValues.departureTime && (
+                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-sm">
+                  Departure Time
+                </span>
+              )}
               {errors.departureTime && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors.departureTime.message}
@@ -190,20 +205,25 @@ export default function DirectSalesForm({
               )}
             </div>
           </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">
-              Return Time
-            </Label>
+          <div>
             <div className="relative">
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none z-10" />
               <Input
                 type="time"
                 {...register("returnTime")}
-                placeholder="Return Time"
+                style={{
+                  colorScheme: watchedValues.returnTime ? "auto" : "light",
+                  color: watchedValues.returnTime ? "inherit" : "transparent",
+                }}
                 className={`pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer ${
                   errors.returnTime ? "border-red-500" : ""
                 }`}
               />
+              {!watchedValues.returnTime && (
+                <span className="absolute left-10 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none text-sm">
+                  Return Time
+                </span>
+              )}
               {errors.returnTime && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors.returnTime.message}

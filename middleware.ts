@@ -35,7 +35,7 @@ const ROLE_DASHBOARD_MAP: Record<UserRole, string> = {
 function getUserRole(request: NextRequest): UserRole | null {
   // Example: Get role from cookie or session
   // const userRole = request.cookies.get("userRole")?.value;
-  const userRole = "admin"; // Placeholder: replace with real logic
+  const userRole = "direct-sales"; // Placeholder: replace with real logic
 
   // Suppress unused variable warning - request will be used when implementing actual auth
   void request;
