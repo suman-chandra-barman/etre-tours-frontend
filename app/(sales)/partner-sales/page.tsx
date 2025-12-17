@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Header from "@/components/shared/Header";
 import PartnerSalesForm from "@/components/sales/forms/PartnerSalesForm";
 import PartnerTransportInfo from "@/components/sales/transportInfo/PartnerTransportInfo";
 import { PartnerSalesFormData } from "@/lib/schemas";
@@ -47,7 +46,6 @@ export default function PartnerSalesPage() {
 
   return (
     <>
-      <Header />
       <div className="flex-2 flex overflow-hidden">
         <PartnerSalesForm
           onSubmit={handleFormSubmit}

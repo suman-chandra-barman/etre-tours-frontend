@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/shared/Header";
+import Header from "@/components/layout/Header";
 import {
   Calendar,
   Search,

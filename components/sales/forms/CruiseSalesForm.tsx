@@ -4,41 +4,27 @@ import React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  CalendarIcon,
-  Clock,
   MapPin,
-  Bus,
   UserCircle2,
   Users,
   Baby,
   Briefcase,
-  MinusCircle,
-  PlusCircle,
   Plus,
-  Minus,
 } from "lucide-react";
-import {
-  TOUR_OPTIONS,
-  TRANSPORT_OPTIONS,
-  DRIVER_OPTIONS,
-  BUS_ID_OPTIONS,
-  GUIDE_OPTIONS,
-} from "@/constants/FormOptions";
+import { TOUR_OPTIONS, GUIDE_OPTIONS } from "@/constants/FormOptions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   cruiseSalesSchema,
   type CruiseSalesFormData,
-  type AdditionalTransport,
 } from "@/lib/schemas";
+import { cruiseSalesDefaultValues } from "@/constants/defaultFormValues";
+import { DateTimeField } from "@/components/sales/shared/DateTimeField";
+import { SelectField } from "@/components/sales/shared/SelectField";
+import { PassengerCounter } from "@/components/sales/shared/PassengerCounter";
+import { TransportDetails } from "@/components/sales/shared/TransportDetails";
+import { usePassengerCounter } from "@/components/sales/shared/usePassengerCounter";
+import { AdditionalTransportCard } from "@/components/sales/shared/AdditionalTransportCard";
 
 interface CruiseSalesFormProps {
   onSubmit: (data: CruiseSalesFormData) => void;
@@ -63,20 +49,7 @@ export default function CruiseSalesForm({
   } = useForm<CruiseSalesFormData>({
     resolver: zodResolver(cruiseSalesSchema),
     defaultValues: {
-      date: "",
-      departureTime: "",
-      returnTime: "",
-      tour: "",
-      transport: "",
-      driver: "",
-      busId: "",
-      guide: "",
-      extraGuide: "",
-      adults: 0,
-      children: 0,
-      infant: 0,
-      foc: 0,
-      additionalTransports: [],
+      ...cruiseSalesDefaultValues,
       ...defaultValues,
     },
     mode: "onChange",
@@ -202,30 +175,12 @@ export default function CruiseSalesForm({
     };
   };
 
-  const incrementCounter = (
-    field: "adults" | "children" | "infant" | "foc"
-  ) => {
-    const currentValue = watchedValues[field] || 0;
-    setValue(field, Math.min(currentValue + 1, 99));
-    trigger(field);
-  };
-
-  const decrementCounter = (
-    field: "adults" | "children" | "infant" | "foc"
-  ) => {
-    const currentValue = watchedValues[field] || 0;
-    setValue(field, Math.max(currentValue - 1, 0));
-    trigger(field);
-  };
-
-  const handleCounterChange = (
-    field: "adults" | "children" | "infant" | "foc",
-    value: string
-  ) => {
-    const numValue = parseInt(value) || 0;
-    setValue(field, Math.min(Math.max(numValue, 0), 99));
-    trigger(field);
-  };
+  const { incrementCounter, decrementCounter, handleCounterChange } =
+    usePassengerCounter<CruiseSalesFormData>({
+      setValue,
+      trigger,
+      watchedValues,
+    });
 
   return (
     <form
@@ -238,73 +193,45 @@ export default function CruiseSalesForm({
         </h1>
 
         {/* Date and Time Selection */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">Date</Label>
-            <div className="relative">
-              <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-              <Input
-                type="date"
-                {...register("date")}
-                className="pl-10 h-11  border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">
-              Departure Time
-            </Label>
-            <div className="relative">
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-              <Input
-                type="time"
-                {...register("departureTime")}
-                placeholder="Departure Time"
-                className="pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">
-              Return Time
-            </Label>
-            <div className="relative">
-              <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
-              <Input
-                type="time"
-                {...register("returnTime")}
-                placeholder="Return Time"
-                className="pl-10 h-11 border-gray-400 rounded [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-              />
-            </div>
-          </div>
+        <div className="grid grid-cols-3 items-end gap-4 mb-6">
+          <DateTimeField
+            type="date"
+            label="Date"
+            name="date"
+            register={register}
+            value={watchedValues.date}
+            placeholder="Date"
+          />
+          <DateTimeField
+            type="time"
+            label="Durations"
+            name="departureTime"
+            register={register}
+            value={watchedValues.departureTime}
+            placeholder="Departure Time"
+          />
+          <DateTimeField
+            type="time"
+            name="returnTime"
+            register={register}
+            value={watchedValues.returnTime}
+            placeholder="Return Time"
+          />
         </div>
 
         {/* Tour Details */}
-        <div className="mb-6">
-          <Label className="mb-2">Tour Details</Label>
-          <div className="relative">
-            <Select
-              value={watchedValues.tour}
-              onValueChange={(value) => {
-                setValue("tour", value);
-                trigger("tour");
-              }}
-            >
-              <SelectTrigger className="pl-10 w-full h-11  border-gray-400 rounded">
-                <SelectValue placeholder="Pick a tour spot" />
-              </SelectTrigger>
-              <SelectContent>
-                {TOUR_OPTIONS.map((tour) => (
-                  <SelectItem key={tour.value} value={tour.value}>
-                    {tour.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-          </div>
-        </div>
+        <SelectField
+          label="Tour Details"
+          icon={MapPin}
+          value={watchedValues.tour}
+          onValueChange={(value) => {
+            setValue("tour", value);
+            trigger("tour");
+          }}
+          options={TOUR_OPTIONS}
+          placeholder="Pick a tour spot"
+          className="mb-6"
+        />
 
         {/* Separator */}
         <div className="border border-dashed my-6 border-gray-300" />
@@ -323,74 +250,24 @@ export default function CruiseSalesForm({
               <Plus /> Add new transport
             </Button>
           </div>
-          <Label className="mb-2">Transport</Label>
-          <div className="relative mb-3">
-            <Select
-              value={watchedValues.transport}
-              onValueChange={(value) => {
-                setValue("transport", value);
-                trigger("transport");
-              }}
-            >
-              <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                <SelectValue placeholder="Select a transport" />
-              </SelectTrigger>
-              <SelectContent>
-                {TRANSPORT_OPTIONS.map((transport) => (
-                  <SelectItem key={transport.value} value={transport.value}>
-                    {transport.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Bus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="relative">
-              <Select
-                value={watchedValues.driver}
-                onValueChange={(value) => {
-                  setValue("driver", value);
-                  trigger("driver");
-                }}
-              >
-                <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                  <SelectValue placeholder="Assign driver" />
-                </SelectTrigger>
-                <SelectContent>
-                  {DRIVER_OPTIONS.map((driver) => (
-                    <SelectItem key={driver.value} value={driver.value}>
-                      {driver.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-            </div>
-
-            <div className="relative">
-              <Select
-                value={watchedValues.busId}
-                onValueChange={(value) => {
-                  setValue("busId", value);
-                  trigger("busId");
-                }}
-              >
-                <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                  <SelectValue placeholder="Bus ID" />
-                </SelectTrigger>
-                <SelectContent>
-                  {BUS_ID_OPTIONS.map((busId) => (
-                    <SelectItem key={busId.value} value={busId.value}>
-                      {busId.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-            </div>
-          </div>
+          <TransportDetails
+            transport={watchedValues.transport}
+            driver={watchedValues.driver}
+            busId={watchedValues.busId}
+            onTransportChange={(value) => {
+              setValue("transport", value);
+              trigger("transport");
+            }}
+            onDriverChange={(value) => {
+              setValue("driver", value);
+              trigger("driver");
+            }}
+            onBusIdChange={(value) => {
+              setValue("busId", value);
+              trigger("busId");
+            }}
+            showLabel={false}
+          />
         </div>
 
         {/* Passengers Details */}
@@ -400,158 +277,45 @@ export default function CruiseSalesForm({
           {/* Passenger Count */}
           <div className="mb-6">
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <div className="border border-gray-400 rounded px-3 py-1.5">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center">
-                      <Users className="w-5 h-5 text-gray-500 mr-2" />
-                      <span className="text-sm text-gray-700">Adults</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => decrementCounter("adults")}
-                      >
-                        <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                      </button>
-                      <input
-                        type="number"
-                        value={
-                          watchedValues.adults?.toString().padStart(2, "0") ||
-                          "00"
-                        }
-                        onChange={(e) =>
-                          handleCounterChange("adults", e.target.value)
-                        }
-                        className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        min="0"
-                        max="99"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => incrementCounter("adults")}
-                      >
-                        <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <PassengerCounter
+                icon={Users}
+                label="Adults"
+                value={watchedValues.adults || 0}
+                onIncrement={() => incrementCounter("adults")}
+                onDecrement={() => decrementCounter("adults")}
+                onChange={(value) => handleCounterChange("adults", value)}
+                maxWidth="w-20"
+              />
 
-              <div>
-                <div className="border border-gray-400 rounded px-3 py-1.5">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center">
-                      <Users className="w-5 h-5 text-gray-500 mr-2" />
-                      <span className="text-sm text-gray-700">Children</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => decrementCounter("children")}
-                      >
-                        <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                      </button>
-                      <input
-                        type="number"
-                        value={
-                          watchedValues.children?.toString().padStart(2, "0") ||
-                          "00"
-                        }
-                        onChange={(e) =>
-                          handleCounterChange("children", e.target.value)
-                        }
-                        className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        min="0"
-                        max="99"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => incrementCounter("children")}
-                      >
-                        <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <PassengerCounter
+                icon={Users}
+                label="Children"
+                value={watchedValues.children || 0}
+                onIncrement={() => incrementCounter("children")}
+                onDecrement={() => decrementCounter("children")}
+                onChange={(value) => handleCounterChange("children", value)}
+                maxWidth="w-20"
+              />
 
-              <div>
-                <div className="border border-gray-400 rounded px-3 py-1.5">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center">
-                      <Baby className="w-5 h-5 text-gray-500 mr-2" />
-                      <span className="text-sm text-gray-700">Infant</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => decrementCounter("infant")}
-                      >
-                        <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                      </button>
-                      <input
-                        type="number"
-                        value={
-                          watchedValues.infant?.toString().padStart(2, "0") ||
-                          "00"
-                        }
-                        onChange={(e) =>
-                          handleCounterChange("infant", e.target.value)
-                        }
-                        className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        min="0"
-                        max="99"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => incrementCounter("infant")}
-                      >
-                        <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <PassengerCounter
+                icon={Baby}
+                label="Infant"
+                value={watchedValues.infant || 0}
+                onIncrement={() => incrementCounter("infant")}
+                onDecrement={() => decrementCounter("infant")}
+                onChange={(value) => handleCounterChange("infant", value)}
+                maxWidth="w-20"
+              />
 
-              <div>
-                <div className="border border-gray-400 rounded px-3 py-1.5">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center">
-                      <Briefcase className="w-5 h-5 text-gray-500 mr-2" />
-                      <span className="text-sm text-gray-700">
-                        FOC ( Free of charge )
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => decrementCounter("foc")}
-                      >
-                        <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                      </button>
-                      <input
-                        type="number"
-                        value={
-                          watchedValues.foc?.toString().padStart(2, "0") || "00"
-                        }
-                        onChange={(e) =>
-                          handleCounterChange("foc", e.target.value)
-                        }
-                        className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        min="0"
-                        max="99"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => incrementCounter("foc")}
-                      >
-                        <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <PassengerCounter
+                icon={Briefcase}
+                label="FOC ( Free of charge )"
+                value={watchedValues.foc || 0}
+                onIncrement={() => incrementCounter("foc")}
+                onDecrement={() => decrementCounter("foc")}
+                onChange={(value) => handleCounterChange("foc", value)}
+                maxWidth="w-20"
+              />
             </div>
           </div>
         </div>
@@ -560,396 +324,81 @@ export default function CruiseSalesForm({
         <div className="mb-6">
           <Label className="mb-2">Tourist Guide</Label>
           <div className="grid grid-cols-2 items-center gap-3">
-            <div className="relative">
-              <Select
-                value={watchedValues.guide}
-                onValueChange={(value) => {
-                  setValue("guide", value);
-                  trigger("guide");
-                }}
-              >
-                <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                  <SelectValue placeholder="Assign a guide" />
-                </SelectTrigger>
-                <SelectContent>
-                  {GUIDE_OPTIONS.map((guide) => (
-                    <SelectItem key={guide.value} value={guide.value}>
-                      {guide.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-            </div>
-            <div className="relative">
-              <Select
-                value={watchedValues.extraGuide || ""}
-                onValueChange={(value) => setValue("extraGuide", value)}
-              >
-                <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                  <SelectValue placeholder="Add extra guide" />
-                </SelectTrigger>
-                <SelectContent>
-                  {GUIDE_OPTIONS.map((guide) => (
-                    <SelectItem key={guide.value} value={guide.value}>
-                      {guide.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-            </div>
+            <SelectField
+              icon={UserCircle2}
+              value={watchedValues.guide}
+              onValueChange={(value) => {
+                setValue("guide", value);
+                trigger("guide");
+              }}
+              options={GUIDE_OPTIONS}
+              placeholder="Assign a guide"
+            />
+            <SelectField
+              icon={UserCircle2}
+              value={watchedValues.extraGuide || ""}
+              onValueChange={(value) => setValue("extraGuide", value)}
+              options={GUIDE_OPTIONS}
+              placeholder="Add extra guide"
+            />
           </div>
         </div>
 
         {/* Additional Transports */}
         {fields.map((field, index) => (
-          <div key={field.id} className="mb-6">
-            {/* Separator */}
-            <div className="border border-dashed my-6 border-gray-300" />
-
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <Label className="">Transport {index + 2}</Label>
-              <Button
-                variant="link"
-                size="sm"
-                className="text-red-500"
-                onClick={() => removeTransport(index)}
-                type="button"
-              >
-                <Minus className="w-4 h-4" /> Remove
-              </Button>
-            </div>
-
-            <Label className="mb-2">Transport</Label>
-            <div className="relative mb-3">
-              <Select
-                value={
-                  watchedValues.additionalTransports?.[index]?.transport || ""
-                }
-                onValueChange={(value) =>
-                  setValue(`additionalTransports.${index}.transport`, value)
-                }
-              >
-                <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                  <SelectValue placeholder="Select a transport" />
-                </SelectTrigger>
-                <SelectContent>
-                  {TRANSPORT_OPTIONS.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Bus className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="relative">
-                <Select
-                  value={
-                    watchedValues.additionalTransports?.[index]?.driver || ""
-                  }
-                  onValueChange={(value) =>
-                    setValue(`additionalTransports.${index}.driver`, value)
-                  }
-                >
-                  <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                    <SelectValue placeholder="Assign driver" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DRIVER_OPTIONS.map((driver) => (
-                      <SelectItem key={driver.value} value={driver.value}>
-                        {driver.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-              </div>
-
-              <div className="relative">
-                <Select
-                  value={
-                    watchedValues.additionalTransports?.[index]?.busId || ""
-                  }
-                  onValueChange={(value) =>
-                    setValue(`additionalTransports.${index}.busId`, value)
-                  }
-                >
-                  <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                    <SelectValue placeholder="Bus ID" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {BUS_ID_OPTIONS.map((busId) => (
-                      <SelectItem key={busId.value} value={busId.value}>
-                        {busId.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-              </div>
-            </div>
-
-            {/* Passengers Details */}
-            <div className="mb-3 mt-4">
-              <Label className="mb-2">Passengers Details</Label>
-              <div className="mb-6">
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="border border-gray-400 rounded px-3 py-1.5">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center">
-                        <Users className="w-5 h-5 text-gray-500 mr-2" />
-                        <span className="text-sm text-gray-700">Adults</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            decrementAdditionalCounter(index, "adults")
-                          }
-                        >
-                          <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                        </button>
-                        <input
-                          type="number"
-                          value={(
-                            watchedValues.additionalTransports?.[index]
-                              ?.adults || 0
-                          )
-                            .toString()
-                            .padStart(2, "0")}
-                          onChange={(e) =>
-                            handleAdditionalCounterChange(
-                              index,
-                              "adults",
-                              e.target.value
-                            )
-                          }
-                          className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          min="0"
-                          max="99"
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            incrementAdditionalCounter(index, "adults")
-                          }
-                        >
-                          <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="border border-gray-400 rounded px-3 py-1.5">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center">
-                          <Users className="w-5 h-5 text-gray-500 mr-2" />
-                          <span className="text-sm text-gray-700">
-                            Children
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              decrementAdditionalCounter(index, "children")
-                            }
-                          >
-                            <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                          </button>
-                          <input
-                            type="number"
-                            value={(
-                              watchedValues.additionalTransports?.[index]
-                                ?.children || 0
-                            )
-                              .toString()
-                              .padStart(2, "0")}
-                            onChange={(e) =>
-                              handleAdditionalCounterChange(
-                                index,
-                                "children",
-                                e.target.value
-                              )
-                            }
-                            className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            min="0"
-                            max="99"
-                          />
-                          <button
-                            type="button"
-                            onClick={() =>
-                              incrementAdditionalCounter(index, "children")
-                            }
-                          >
-                            <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="border border-gray-400 rounded px-3 py-1.5">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center">
-                          <Baby className="w-5 h-5 text-gray-500 mr-2" />
-                          <span className="text-sm text-gray-700">Infant</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              decrementAdditionalCounter(index, "infant")
-                            }
-                          >
-                            <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                          </button>
-                          <input
-                            type="number"
-                            value={(
-                              watchedValues.additionalTransports?.[index]
-                                ?.infant || 0
-                            )
-                              .toString()
-                              .padStart(2, "0")}
-                            onChange={(e) =>
-                              handleAdditionalCounterChange(
-                                index,
-                                "infant",
-                                e.target.value
-                              )
-                            }
-                            className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            min="0"
-                            max="99"
-                          />
-                          <button
-                            type="button"
-                            onClick={() =>
-                              incrementAdditionalCounter(index, "infant")
-                            }
-                          >
-                            <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="border border-gray-400 rounded px-3 py-1.5">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center">
-                          <Briefcase className="w-5 h-5 text-gray-500 mr-2" />
-                          <span className="text-sm text-gray-700">
-                            FOC (Free of charge)
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              decrementAdditionalCounter(index, "foc")
-                            }
-                          >
-                            <MinusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                          </button>
-                          <input
-                            type="number"
-                            value={(
-                              watchedValues.additionalTransports?.[index]
-                                ?.foc || 0
-                            )
-                              .toString()
-                              .padStart(2, "0")}
-                            onChange={(e) =>
-                              handleAdditionalCounterChange(
-                                index,
-                                "foc",
-                                e.target.value
-                              )
-                            }
-                            className="w-12 text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                            min="0"
-                            max="99"
-                          />
-                          <button
-                            type="button"
-                            onClick={() =>
-                              incrementAdditionalCounter(index, "foc")
-                            }
-                          >
-                            <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Tourist Guide */}
-            <div className="mb-6">
-              <Label className="mb-2">Tourist Guide</Label>
-              <div className="grid grid-cols-2 items-center gap-3">
-                <div className="relative">
-                  <Select
-                    value={
-                      watchedValues.additionalTransports?.[index]?.guide || ""
-                    }
-                    onValueChange={(value) =>
-                      setValue(`additionalTransports.${index}.guide`, value)
-                    }
-                  >
-                    <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                      <SelectValue placeholder="Assign a guide" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {GUIDE_OPTIONS.map((guide) => (
-                        <SelectItem key={guide.value} value={guide.value}>
-                          {guide.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-                </div>
-                <div className="relative">
-                  <Select
-                    value={
-                      watchedValues.additionalTransports?.[index]?.extraGuide ||
-                      ""
-                    }
-                    onValueChange={(value) =>
-                      setValue(
-                        `additionalTransports.${index}.extraGuide`,
-                        value
-                      )
-                    }
-                  >
-                    <SelectTrigger className="pl-10 w-full h-11 border-gray-400 rounded">
-                      <SelectValue placeholder="Add extra guide" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {GUIDE_OPTIONS.map((guide) => (
-                        <SelectItem key={guide.value} value={guide.value}>
-                          {guide.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none z-10" />
-                </div>
-              </div>
-            </div>
-          </div>
+          <AdditionalTransportCard
+            key={field.id}
+            index={index}
+            transport={watchedValues.additionalTransports?.[index] || {}}
+            onRemove={() => removeTransport(index)}
+            onTransportChange={(value) =>
+              setValue(`additionalTransports.${index}.transport`, value)
+            }
+            onDriverChange={(value) =>
+              setValue(`additionalTransports.${index}.driver`, value)
+            }
+            onBusIdChange={(value) =>
+              setValue(`additionalTransports.${index}.busId`, value)
+            }
+            onGuideChange={(value) =>
+              setValue(`additionalTransports.${index}.guide`, value)
+            }
+            onExtraGuideChange={(value) =>
+              setValue(`additionalTransports.${index}.extraGuide`, value)
+            }
+            onAdultsIncrement={() =>
+              incrementAdditionalCounter(index, "adults")
+            }
+            onAdultsDecrement={() =>
+              decrementAdditionalCounter(index, "adults")
+            }
+            onAdultsChange={(value) =>
+              handleAdditionalCounterChange(index, "adults", value)
+            }
+            onChildrenIncrement={() =>
+              incrementAdditionalCounter(index, "children")
+            }
+            onChildrenDecrement={() =>
+              decrementAdditionalCounter(index, "children")
+            }
+            onChildrenChange={(value) =>
+              handleAdditionalCounterChange(index, "children", value)
+            }
+            onInfantIncrement={() =>
+              incrementAdditionalCounter(index, "infant")
+            }
+            onInfantDecrement={() =>
+              decrementAdditionalCounter(index, "infant")
+            }
+            onInfantChange={(value) =>
+              handleAdditionalCounterChange(index, "infant", value)
+            }
+            onFocIncrement={() => incrementAdditionalCounter(index, "foc")}
+            onFocDecrement={() => decrementAdditionalCounter(index, "foc")}
+            onFocChange={(value) =>
+              handleAdditionalCounterChange(index, "foc", value)
+            }
+          />
         ))}
 
         {/* Passengers */}
