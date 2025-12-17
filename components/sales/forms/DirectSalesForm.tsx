@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -23,6 +23,7 @@ import { PassengerCounter } from "@/components/sales/shared/PassengerCounter";
 import { PaymentMethodSelector } from "@/components/sales/shared/PaymentMethodSelector";
 import { TransportDetails } from "@/components/sales/shared/TransportDetails";
 import { usePassengerCounter } from "@/components/sales/shared/usePassengerCounter";
+import PassengerCopyModal from "@/components/modals/PassengerCopyModal";
 
 interface DirectSalesFormProps {
   onSubmit: (data: DirectSalesFormData) => void;
@@ -35,6 +36,10 @@ export default function DirectSalesForm({
   onFormDataChange,
   defaultValues,
 }: DirectSalesFormProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [submittedData, setSubmittedData] =
+    useState<DirectSalesFormData | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -87,6 +92,8 @@ export default function DirectSalesForm({
   };
 
   const onFormSubmit = (data: DirectSalesFormData) => {
+    setSubmittedData(data);
+    setIsModalOpen(true);
     onSubmit(data);
   };
 
@@ -363,10 +370,36 @@ export default function DirectSalesForm({
             disabled={!isValid}
             className="bg-blue-500 hover:bg-blue-600 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Continue
+            Confirm Booking
           </Button>
         </div>
       </form>
+
+      {/* Passenger Copy Modal */}
+      {submittedData && (
+        <PassengerCopyModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          bookingData={{
+            buyerName: submittedData.fullName,
+            tour: submittedData.tour,
+            date: submittedData.date,
+            time: submittedData.departureTime,
+            adults: submittedData.adults,
+            children: submittedData.children,
+            infant: submittedData.infant,
+            guide: submittedData.guide,
+            transport: submittedData.transport,
+            driver: submittedData.driver,
+            busId: submittedData.busId,
+            paymentMethod: submittedData.paymentMethod,
+            totalAmount: calculateTotal(),
+            currency: submittedData.currency || "USD",
+            availableSeats: 41,
+            bookedSeats: 0,
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -79,8 +79,6 @@ export default function TourHistoryPage() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      <Header />
-
       <div className="flex-1 overflow-auto">
         <div className="max-w-[1920px] mx-auto p-6">
           {/* Header Section */}
