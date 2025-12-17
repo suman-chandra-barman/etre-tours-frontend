@@ -91,7 +91,7 @@ export default function DirectSalesForm({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-8">
+    <div className="flex-1 overflow-y-auto p-4 lg:p-8">
       <form onSubmit={handleSubmit(onFormSubmit)} className="max-w-4xl">
         <h1 className="text-2xl font-semibold text-gray-800 mb-2">
           Pacific Tours Ticket
@@ -102,7 +102,7 @@ export default function DirectSalesForm({
         </p>
 
         {/* Date and Time Selection */}
-        <div className="grid grid-cols-3 items-end gap-4 mb-6">
+        <div className="grid lg:grid-cols-3 items-end gap-4 mb-6">
           <DateTimeField
             type="date"
             label="Date"
@@ -112,23 +112,25 @@ export default function DirectSalesForm({
             error={errors.date}
             placeholder="Date"
           />
-          <DateTimeField
-            type="time"
-            label="Duration"
-            name="departureTime"
-            register={register}
-            value={watchedValues.departureTime}
-            error={errors.departureTime}
-            placeholder="Departure Time"
-          />
-          <DateTimeField
-            type="time"
-            name="returnTime"
-            register={register}
-            value={watchedValues.returnTime}
-            error={errors.returnTime}
-            placeholder="Return Time"
-          />
+          <div className="grid grid-cols-2 gap-4 items-end lg:col-span-2">
+            <DateTimeField
+              type="time"
+              label="Duration"
+              name="departureTime"
+              register={register}
+              value={watchedValues.departureTime}
+              error={errors.departureTime}
+              placeholder="Departure Time"
+            />
+            <DateTimeField
+              type="time"
+              name="returnTime"
+              register={register}
+              value={watchedValues.returnTime}
+              error={errors.returnTime}
+              placeholder="Return Time"
+            />
+          </div>
         </div>
 
         {/* Tour Details */}
@@ -227,7 +229,7 @@ export default function DirectSalesForm({
         </div>
 
         {/* Passenger Count */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid lg:grid-cols-2 gap-3 mb-6">
           <PassengerCounter
             icon={Users}
             label="Adults"

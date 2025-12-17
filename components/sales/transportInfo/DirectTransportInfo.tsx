@@ -35,7 +35,7 @@ export default function DirectTransportInfo({
       : "N/A";
 
   return (
-    <div className="min-w-md bg-gray-50 border-l border-gray-200 p-6">
+    <div className="lg:min-w-md bg-gray-50 border-l border-gray-200 p-4 lg:p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center mb-1">
@@ -47,7 +47,7 @@ export default function DirectTransportInfo({
         </div>
       </div>
 
-      <div className="bg-white rounded-lg p-6 text-center">
+      <div className="bg-white rounded-lg p-4 lg:p-6 text-center">
         <div className="flex justify-center space-x-8 mb-4">
           <div className="text-center flex flex-col justify-center items-center">
             <Image
