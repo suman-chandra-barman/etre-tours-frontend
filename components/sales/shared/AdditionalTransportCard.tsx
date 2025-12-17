@@ -1,5 +1,4 @@
-import React from "react";
-import { UseFormSetValue } from "react-hook-form";
+
 import { Users, Baby, Briefcase, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -11,6 +10,7 @@ import { UserCircle2 } from "lucide-react";
 
 interface AdditionalTransportCardProps {
   index: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transport: any;
   onRemove: () => void;
   onTransportChange: (value: string) => void;

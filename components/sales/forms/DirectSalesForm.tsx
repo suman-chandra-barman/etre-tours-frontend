@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -25,11 +26,13 @@ import { usePassengerCounter } from "@/components/sales/shared/usePassengerCount
 
 interface DirectSalesFormProps {
   onSubmit: (data: DirectSalesFormData) => void;
+  onFormDataChange?: (data: Partial<DirectSalesFormData>) => void;
   defaultValues?: Partial<DirectSalesFormData>;
 }
 
 export default function DirectSalesForm({
   onSubmit,
+  onFormDataChange,
   defaultValues,
 }: DirectSalesFormProps) {
   const {
@@ -49,6 +52,17 @@ export default function DirectSalesForm({
   });
 
   const watchedValues = watch();
+  const prevValuesRef = useRef<string>("");
+
+  useEffect(() => {
+    if (onFormDataChange) {
+      const currentValues = JSON.stringify(watchedValues);
+      if (currentValues !== prevValuesRef.current) {
+        prevValuesRef.current = currentValues;
+        onFormDataChange(watchedValues);
+      }
+    }
+  }, [watchedValues, onFormDataChange]);
 
   const { incrementCounter, decrementCounter, handleCounterChange } =
     usePassengerCounter<DirectSalesFormData>({
@@ -213,51 +227,49 @@ export default function DirectSalesForm({
         </div>
 
         {/* Passenger Count */}
-        <div className="mb-6">
-          <div className="grid grid-cols-2 gap-3">
-            <PassengerCounter
-              icon={Users}
-              label="Adults"
-              value={watchedValues.adults}
-              onIncrement={() => incrementCounter("adults")}
-              onDecrement={() => decrementCounter("adults")}
-              onChange={(value) => handleCounterChange("adults", value)}
-              error={errors.adults}
-              priceInfo={`$${ADULT_PRICE.toFixed(2)} per adult`}
-            />
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <PassengerCounter
+            icon={Users}
+            label="Adults"
+            value={watchedValues.adults}
+            onIncrement={() => incrementCounter("adults")}
+            onDecrement={() => decrementCounter("adults")}
+            onChange={(value) => handleCounterChange("adults", value)}
+            error={errors.adults}
+            priceInfo={`$${ADULT_PRICE.toFixed(2)} per adult`}
+          />
 
-            <PassengerCounter
-              icon={Users}
-              label="Children"
-              value={watchedValues.children}
-              onIncrement={() => incrementCounter("children")}
-              onDecrement={() => decrementCounter("children")}
-              onChange={(value) => handleCounterChange("children", value)}
-              priceInfo={`$${CHILD_PRICE.toFixed(2)} per child above 18 y/o`}
-            />
+          <PassengerCounter
+            icon={Users}
+            label="Children"
+            value={watchedValues.children}
+            onIncrement={() => incrementCounter("children")}
+            onDecrement={() => decrementCounter("children")}
+            onChange={(value) => handleCounterChange("children", value)}
+            priceInfo={`$${CHILD_PRICE.toFixed(2)} per child above 18 y/o`}
+          />
 
-            <PassengerCounter
-              icon={Baby}
-              label="Infant"
-              value={watchedValues.infant}
-              onIncrement={() => incrementCounter("infant")}
-              onDecrement={() => decrementCounter("infant")}
-              onChange={(value) => handleCounterChange("infant", value)}
-              error={errors.infant}
-              priceInfo={`$${INFANT_PRICE.toFixed(2)} per infant`}
-            />
+          <PassengerCounter
+            icon={Baby}
+            label="Infant"
+            value={watchedValues.infant}
+            onIncrement={() => incrementCounter("infant")}
+            onDecrement={() => decrementCounter("infant")}
+            onChange={(value) => handleCounterChange("infant", value)}
+            error={errors.infant}
+            priceInfo={`$${INFANT_PRICE.toFixed(2)} per infant`}
+          />
 
-            <PassengerCounter
-              icon={Briefcase}
-              label="FOC"
-              value={watchedValues.foc}
-              onIncrement={() => incrementCounter("foc")}
-              onDecrement={() => decrementCounter("foc")}
-              onChange={(value) => handleCounterChange("foc", value)}
-              error={errors.foc}
-              priceInfo={`$${FOC_PRICE.toFixed(2)} per FOC`}
-            />
-          </div>
+          <PassengerCounter
+            icon={Briefcase}
+            label="FOC"
+            value={watchedValues.foc}
+            onIncrement={() => incrementCounter("foc")}
+            onDecrement={() => decrementCounter("foc")}
+            onChange={(value) => handleCounterChange("foc", value)}
+            error={errors.foc}
+            priceInfo={`$${FOC_PRICE.toFixed(2)} per FOC`}
+          />
         </div>
 
         {/* Amount to Pay */}

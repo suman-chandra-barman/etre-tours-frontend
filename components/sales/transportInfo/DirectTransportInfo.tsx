@@ -1,18 +1,49 @@
-"use client";
-
 import Image from "next/image";
+import { DirectSalesFormData } from "@/lib/schemas";
 
-export default function TransportInfo() {
+interface DirectTransportInfoProps {
+  formData: Partial<DirectSalesFormData>;
+}
+
+export default function DirectTransportInfo({
+  formData,
+}: DirectTransportInfoProps) {
+  const { transport, date, departureTime, returnTime } = formData;
+  // Format the date if available
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    const dateObj = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
+    return dateObj.toLocaleDateString("en-US", options);
+  };
+
+  // Format the time if available
+  const formatTime = (timeString?: string) => {
+    if (!timeString) return "";
+    return timeString;
+  };
+
+  const displayDateTime =
+    date || departureTime || returnTime
+      ? `${formatDate(date)}${
+          departureTime ? ` · ${formatTime(departureTime)}` : ""
+        }${returnTime ? ` - ${formatTime(returnTime)}` : ""}`
+      : "N/A";
+
   return (
     <div className="min-w-md bg-gray-50 border-l border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center mb-1">
             <h3 className="font-semibold text-gray-800 text-xl">
-              Island Transport Ltd
+              {transport || "No transport selected"}
             </h3>
           </div>
-          <p className="text-xs text-gray-500">24 Sep, 2025 · 9:00 AM</p>
+          <p className="text-xs text-gray-500">{displayDateTime}</p>
         </div>
       </div>
 
