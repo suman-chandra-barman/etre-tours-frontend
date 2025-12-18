@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/layout/Header";
 import {
   Calendar,
   Search,
@@ -76,7 +75,6 @@ export default function TourHistoryPage() {
     <div className="flex flex-col bg-gray-50 overflow-y-auto">
       <div className="flex-1">
         <div className="p-6">
-          {/* Header Section */}
           <div
             className={`flex items-center justify-between mb-6 ${styles.noPrint}`}
           >
