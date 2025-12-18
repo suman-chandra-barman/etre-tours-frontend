@@ -17,7 +17,7 @@ function CruiseSalesPage() {
   };
 
   return (
-    <div className="flex-2 flex overflow-hidden">
+    <div className="flex flex-2">
       <CruiseSalesForm
         onSubmit={handleFormSubmit}
         onFormDataChange={setCurrentFormData}
