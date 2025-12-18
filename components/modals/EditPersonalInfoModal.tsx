@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { X, Building2, MapPin, FileText, Mail, Phone } from "lucide-react";
 import Image from "next/image";
-import { PersonalInfo } from "@/app/(admin)/admin/settings/personal-info/page";
-
-
+import { PersonalInfo } from "@/app/(main)/admin/settings/personal-info/page";
 
 interface EditCompanyProfileModalProps {
   isOpen: boolean;
@@ -63,7 +61,9 @@ export default function EditCompanyProfileModal({
         <div className="bg-white rounded shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 sticky top-0 bg-white">
-            <h2 className="text-xl font-bold text-gray-900">Edit Personal Info</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              Edit Personal Info
+            </h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"

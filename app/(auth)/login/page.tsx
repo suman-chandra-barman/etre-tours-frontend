@@ -2,16 +2,58 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import logo from "@/public/logo.svg";
+import { Button } from "@/components/ui/button";
+import { useUser } from "@/contexts/UserContext";
+import { UserRole } from "@/types/user";
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const { setUser } = useUser();
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!selectedRole) {
+      alert("Please select a role");
+      return;
+    }
+
     // Handle login logic
+    // For demo purposes, creating a user with the selected role
+    const email = (e.currentTarget as HTMLFormElement).email.value;
+    const password = (e.currentTarget as HTMLFormElement).password.value;
+
+    // You would typically validate credentials here
+    if (email && password) {
+      setUser({
+        id: "1",
+        name: "User Name",
+        email: email,
+        role: selectedRole,
+      });
+
+      // Redirect based on role
+      switch (selectedRole) {
+        case "admin":
+          router.push("/admin");
+          break;
+        case "direct-sales":
+          router.push("/direct-sales");
+          break;
+        case "cruise-sales":
+          router.push("/cruise-sales");
+          break;
+        case "partner-sales":
+          router.push("/partner-sales");
+          break;
+      }
+    }
   };
 
   return (
@@ -45,7 +87,9 @@ function LoginPage() {
             </div>
             <input
               type="email"
+              name="email"
               placeholder="Email Address"
+              required
               className="w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
           </div>
@@ -57,7 +101,9 @@ function LoginPage() {
             </div>
             <input
               type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="Password"
+              required
               className="w-full pl-12 pr-12 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
             <button
@@ -88,10 +134,58 @@ function LoginPage() {
             </a>
           </div>
 
+          {/* Role Selection */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Select Role
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setSelectedRole("admin")}
+                variant={selectedRole === "admin" ? "default" : "outline"}
+              >
+                Admin
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setSelectedRole("direct-sales")}
+                variant={
+                  selectedRole === "direct-sales" ? "default" : "outline"
+                }
+              >
+                Direct Sales
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setSelectedRole("cruise-sales")}
+                variant={
+                  selectedRole === "cruise-sales" ? "default" : "outline"
+                }
+              >
+                Cruise Sales
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setSelectedRole("partner-sales")}
+                variant={
+                  selectedRole === "partner-sales" ? "default" : "outline"
+                }
+              >
+                Partner Sales
+              </Button>
+            </div>
+          </div>
+
           {/* Login Button */}
           <button
             type="submit"
-            className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/30"
+            className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-xl transition-colors shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!selectedRole}
           >
             Login
           </button>

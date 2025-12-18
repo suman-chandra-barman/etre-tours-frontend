@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { User, UserRole } from "@/types/user";
 
 interface UserContextType {
@@ -12,13 +12,8 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  // Default user for demo - replace with actual auth logic
-  const [user, setUser] = useState<User | null>({
-    id: "1",
-    name: "John Doe",
-    email: "john@example.com",
-    role: "admin",
-  });
+  // Start with no user - will be set on login
+  const [user, setUser] = useState<User | null>(null);
 
   const role = user?.role || null;
 
