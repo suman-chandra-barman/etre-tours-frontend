@@ -1,4 +1,4 @@
-import React from "react";
+
 import { FieldError } from "react-hook-form";
 import { MinusCircle, PlusCircle, LucideIcon } from "lucide-react";
 
@@ -47,7 +47,6 @@ export function PassengerCounter({
               onChange={(e) => onChange(e.target.value)}
               className={`${maxWidth} text-center text-sm font-medium border bg-gray-200 rounded py-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
               min="0"
-              max="99"
             />
             <button type="button" onClick={onIncrement}>
               <PlusCircle className="h-4 w-4 text-gray-600 hover:text-blue-500 cursor-pointer" />

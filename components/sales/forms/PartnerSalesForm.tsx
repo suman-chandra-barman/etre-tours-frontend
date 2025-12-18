@@ -83,7 +83,7 @@ export default function PartnerSalesForm({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-8">
+    <div className="flex-1 overflow-y-auto  p-4 lg:p-8">
       <form onSubmit={handleSubmit(onFormSubmit)} className="max-w-4xl">
         <h1 className="text-2xl font-semibold text-gray-800 mb-2">
           Partner sales

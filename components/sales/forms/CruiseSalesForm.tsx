@@ -14,10 +14,7 @@ import {
 import { TOUR_OPTIONS, GUIDE_OPTIONS } from "@/constants/FormOptions";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  cruiseSalesSchema,
-  type CruiseSalesFormData,
-} from "@/lib/schemas";
+import { cruiseSalesSchema, type CruiseSalesFormData } from "@/lib/schemas";
 import { cruiseSalesDefaultValues } from "@/constants/defaultFormValues";
 import { DateTimeField } from "@/components/sales/shared/DateTimeField";
 import { SelectField } from "@/components/sales/shared/SelectField";
@@ -102,7 +99,7 @@ export default function CruiseSalesForm({
       watchedValues.additionalTransports?.[index]?.[field] || 0;
     setValue(
       `additionalTransports.${index}.${field}`,
-      Math.min(currentValue + 1, 99)
+      Math.min(currentValue + 1)
     );
   };
 
@@ -126,7 +123,7 @@ export default function CruiseSalesForm({
     const numValue = parseInt(value) || 0;
     setValue(
       `additionalTransports.${index}.${field}`,
-      Math.min(Math.max(numValue, 0), 99)
+      Math.min(Math.max(numValue, 0))
     );
   };
 
@@ -185,7 +182,7 @@ export default function CruiseSalesForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex-1 overflow-y-auto p-8"
+      className="flex-1 overflow-y-auto p-2 md:p-4 lg:p-6"
     >
       <div className="max-w-4xl">
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">
@@ -193,7 +190,7 @@ export default function CruiseSalesForm({
         </h1>
 
         {/* Date and Time Selection */}
-        <div className="grid grid-cols-3 items-end gap-4 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 items-end gap-4 mb-6">
           <DateTimeField
             type="date"
             label="Date"
@@ -202,21 +199,23 @@ export default function CruiseSalesForm({
             value={watchedValues.date}
             placeholder="Date"
           />
-          <DateTimeField
-            type="time"
-            label="Durations"
-            name="departureTime"
-            register={register}
-            value={watchedValues.departureTime}
-            placeholder="Departure Time"
-          />
-          <DateTimeField
-            type="time"
-            name="returnTime"
-            register={register}
-            value={watchedValues.returnTime}
-            placeholder="Return Time"
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end lg:col-span-2">
+            <DateTimeField
+              type="time"
+              label="Durations"
+              name="departureTime"
+              register={register}
+              value={watchedValues.departureTime}
+              placeholder="Departure Time"
+            />
+            <DateTimeField
+              type="time"
+              name="returnTime"
+              register={register}
+              value={watchedValues.returnTime}
+              placeholder="Return Time"
+            />
+          </div>
         </div>
 
         {/* Tour Details */}
@@ -275,48 +274,46 @@ export default function CruiseSalesForm({
           <Label className="mb-2">Passengers Details</Label>
 
           {/* Passenger Count */}
-          <div className="mb-6">
-            <div className="grid grid-cols-2 gap-3">
-              <PassengerCounter
-                icon={Users}
-                label="Adults"
-                value={watchedValues.adults || 0}
-                onIncrement={() => incrementCounter("adults")}
-                onDecrement={() => decrementCounter("adults")}
-                onChange={(value) => handleCounterChange("adults", value)}
-                maxWidth="w-20"
-              />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6">
+            <PassengerCounter
+              icon={Users}
+              label="Adults"
+              value={watchedValues.adults || 0}
+              onIncrement={() => incrementCounter("adults")}
+              onDecrement={() => decrementCounter("adults")}
+              onChange={(value) => handleCounterChange("adults", value)}
+              maxWidth="w-20"
+            />
 
-              <PassengerCounter
-                icon={Users}
-                label="Children"
-                value={watchedValues.children || 0}
-                onIncrement={() => incrementCounter("children")}
-                onDecrement={() => decrementCounter("children")}
-                onChange={(value) => handleCounterChange("children", value)}
-                maxWidth="w-20"
-              />
+            <PassengerCounter
+              icon={Users}
+              label="Children"
+              value={watchedValues.children || 0}
+              onIncrement={() => incrementCounter("children")}
+              onDecrement={() => decrementCounter("children")}
+              onChange={(value) => handleCounterChange("children", value)}
+              maxWidth="w-20"
+            />
 
-              <PassengerCounter
-                icon={Baby}
-                label="Infant"
-                value={watchedValues.infant || 0}
-                onIncrement={() => incrementCounter("infant")}
-                onDecrement={() => decrementCounter("infant")}
-                onChange={(value) => handleCounterChange("infant", value)}
-                maxWidth="w-20"
-              />
+            <PassengerCounter
+              icon={Baby}
+              label="Infant"
+              value={watchedValues.infant || 0}
+              onIncrement={() => incrementCounter("infant")}
+              onDecrement={() => decrementCounter("infant")}
+              onChange={(value) => handleCounterChange("infant", value)}
+              maxWidth="w-20"
+            />
 
-              <PassengerCounter
-                icon={Briefcase}
-                label="FOC ( Free of charge )"
-                value={watchedValues.foc || 0}
-                onIncrement={() => incrementCounter("foc")}
-                onDecrement={() => decrementCounter("foc")}
-                onChange={(value) => handleCounterChange("foc", value)}
-                maxWidth="w-20"
-              />
-            </div>
+            <PassengerCounter
+              icon={Briefcase}
+              label="FOC"
+              value={watchedValues.foc || 0}
+              onIncrement={() => incrementCounter("foc")}
+              onDecrement={() => decrementCounter("foc")}
+              onChange={(value) => handleCounterChange("foc", value)}
+              maxWidth="w-20"
+            />
           </div>
         </div>
 

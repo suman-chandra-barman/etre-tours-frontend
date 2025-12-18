@@ -209,12 +209,12 @@ export default function TourHistoryPage() {
 
           {/* Table Section */}
           <div
-            className={`bg-white rounded-xl border border-gray-200 ${styles.printArea}`}
+            className={`bg-white rounded-xl ${styles.printArea}`}
           >
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
+                  <tr className="border-b border-gray-200">
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                       Issue Date
                     </th>

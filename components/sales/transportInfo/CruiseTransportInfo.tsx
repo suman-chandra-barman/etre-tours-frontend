@@ -59,7 +59,7 @@ function CruiseTransportInfo({ formData }: CruiseTransportInfoProps) {
   const totalPassengers = totalAdults + totalChildren + totalInfants + totalFOC;
 
   return (
-    <div className=" bg-white p-8 border-l border-gray-200 overflow-y-auto min-w-md">
+    <div className=" bg-white border-l border-gray-200 overflow-y-auto md:min-w-xs lg:min-w-sm xl:min-w-md p-2 md:p-4 lg:p-6">
       <div className="">
         {/* Header */}
         <div className="mb-6">
