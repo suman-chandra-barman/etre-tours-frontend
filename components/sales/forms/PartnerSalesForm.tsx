@@ -89,27 +89,25 @@ export default function PartnerSalesForm({
           Partner sales
         </h1>
         {/* Reservation Date and Time */}
-        <div className="mb-6">
-          <div className="grid grid-cols-2 gap-3">
-            <DateTimeField
-              type="date"
-              label="Reservation Date"
-              name="date"
-              register={register}
-              value={watchedValues.date}
-              error={errors.date}
-              placeholder="Date"
-            />
-            <DateTimeField
-              type="time"
-              label="Time"
-              name="time"
-              register={register}
-              value={watchedValues.time}
-              error={errors.time}
-              placeholder="Time"
-            />
-          </div>
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <DateTimeField
+            type="date"
+            label="Reservation Date"
+            name="date"
+            register={register}
+            value={watchedValues.date}
+            error={errors.date}
+            placeholder="Date"
+          />
+          <DateTimeField
+            type="time"
+            label="Time"
+            name="time"
+            register={register}
+            value={watchedValues.time}
+            error={errors.time}
+            placeholder="Time"
+          />
         </div>
 
         {/* Tour Details */}
@@ -187,7 +185,7 @@ export default function PartnerSalesForm({
         {/* Group Info */}
         <div className="mb-6">
           <Label className="mb-2">Group Info</Label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <PassengerCounter
               icon={Users}
               label="Adults"
