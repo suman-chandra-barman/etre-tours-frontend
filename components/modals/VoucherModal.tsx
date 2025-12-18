@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import logo from "@/public/logo.svg";
-import styles from "@/components/styles/modals/PrintModal.module.css";
+import styles from "@/components/styles/Print.module.css";
 
 interface VoucherModalProps {
   isOpen: boolean;

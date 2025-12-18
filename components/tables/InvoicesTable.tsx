@@ -9,7 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import InvoiceModal from "../modals/InvoiceModal";
-import styles from "@/components/styles/modals/PrintModal.module.css";
+import styles from "@/components/styles/Print.module.css";
 import { StatCard } from "../admin/cards/StatCard";
 
 interface InvoiceItem {
@@ -270,7 +270,6 @@ export default function InvoicesTable() {
 
   return (
     <div className="flex flex-col bg-gray-50">
-
       <div
         className={`grid md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 ${styles.noPrint}`}
       >

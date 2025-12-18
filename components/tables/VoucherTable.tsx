@@ -9,7 +9,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import VoucherModal from "../modals/VoucherModal";
-import styles from "@/components/styles/modals/PrintModal.module.css";
+import styles from "@/components/styles/Print.module.css";
 import { StatCard } from "../admin/cards/StatCard";
 
 interface VoucherItem {
@@ -278,7 +278,7 @@ export default function VoucherTable() {
         <StatCard title="Pending" value="50" />
         <StatCard title="Paid" value="30" />
       </div>
-      
+
       <div className="flex-1 overflow-auto">
         <div
           className={`flex items-center justify-between mb-6 ${styles.noPrint}`}

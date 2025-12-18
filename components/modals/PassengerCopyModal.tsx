@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "@/components/styles/modals/PrintModal.module.css";
+import styles from "@/components/styles/Print.module.css";
 import { X } from "lucide-react";
 
 interface PassengerCopyModalProps {
@@ -62,7 +62,6 @@ export default function PassengerCopyModal({
       year: "numeric",
     });
   };
-
 
   return (
     <>
