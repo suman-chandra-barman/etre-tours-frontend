@@ -66,7 +66,7 @@ function CruiseTransportInfo({ formData, className }: CruiseTransportInfoProps) 
       <div className="">
         {/* Header */}
         <header className="mb-6">
-          <Image src={logo} alt="Company Logo" width={50} height={50} />
+          <Image src={logo} alt="Company Logo" width={30} height={50} />
           <h2 className="text-xl font-semibold text-gray-900 mt-2">Receipt</h2>
         </header>
 

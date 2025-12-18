@@ -37,7 +37,7 @@ function PartnerTransportInfo({ formData = {}, className }: PartnerTransportInfo
       <div className="">
         {/* Header */}
         <div className="mb-4">
-          <Image src={logo} alt="Company Logo" width={50} height={50} />
+          <Image src={logo} alt="Company Logo" width={30} height={32} />
           <h2 className="text-xl font-semibold text-gray-900 mt-2">Invoice</h2>
         </div>
 
