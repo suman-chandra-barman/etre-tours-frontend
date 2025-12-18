@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import PartnerSalesForm from "@/components/sales/forms/PartnerSalesForm";
 import PartnerTransportInfo from "@/components/sales/transportInfo/PartnerTransportInfo";
 import { PartnerSalesFormData } from "@/lib/schemas";
+import styles from "@/components/styles/Print.module.css";
 
 export default function PartnerSalesPage() {
   const [formData, setFormData] = useState<Partial<PartnerSalesFormData>>({
@@ -42,6 +43,8 @@ export default function PartnerSalesPage() {
     setFormData(data);
     // Here you would typically send the data to your backend API
     // For now, we'll just log it and show a success message
+
+    window.print();
   };
 
   return (
@@ -51,7 +54,7 @@ export default function PartnerSalesPage() {
           onSubmit={handleFormSubmit}
           onFormDataChange={handleFormDataChange}
         />
-        <PartnerTransportInfo formData={formData} />
+        <PartnerTransportInfo formData={formData} className={`${styles.printArea}`}/>
       </div>
     </>
   );

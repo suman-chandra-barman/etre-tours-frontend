@@ -1,10 +1,13 @@
 import { PartnerSalesFormData } from "@/lib/schemas";
+import Image from "next/image";
+import logo from "@/public/logo.svg"
 
 interface PartnerTransportInfoProps {
   formData?: Partial<PartnerSalesFormData>;
+  className?: string;
 }
 
-function PartnerTransportInfo({ formData = {} }: PartnerTransportInfoProps) {
+function PartnerTransportInfo({ formData = {}, className }: PartnerTransportInfoProps) {
   // Format date
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "";
@@ -30,15 +33,16 @@ function PartnerTransportInfo({ formData = {} }: PartnerTransportInfoProps) {
   const totalAmount = totalAdults * ADULT_PRICE + totalChildren * CHILD_PRICE;
 
   return (
-    <div className="bg-white border-l border-gray-200 overflow-y-auto md:min-w-xs lg:min-w-sm xl:min-w-md p-2 md:p-4 lg:p-6">
+    <div className={` bg-white border-l border-gray-200 overflow-y-auto md:min-w-xs lg:min-w-sm xl:min-w-md p-2 md:p-4 lg:p-6 ${className}`}>
       <div className="">
         {/* Header */}
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Invoice</h2>
+        <div className="mb-4">
+          <Image src={logo} alt="Company Logo" width={50} height={50} />
+          <h2 className="text-xl font-semibold text-gray-900 mt-2">Invoice</h2>
         </div>
 
         {/* Reservation Information */}
-        <div className="space-y-4 mb-6">
+        <div className="space-y-2 mb-4">
           <div className="flex items-start gap-3">
             <div className="flex items-center gap-3 text-sm tracking-widest">
               <p>Reservation : </p>
@@ -83,7 +87,7 @@ function PartnerTransportInfo({ formData = {} }: PartnerTransportInfoProps) {
         </div>
 
         {/* Transport Details */}
-        <div className="border-t border-gray-200 pt-6 mb-6">
+        <div className="border-t border-gray-200 pt-4 mb-4">
           <div className="flex items-start gap-3">
             <div className="flex items-center gap-3 text-sm tracking-widest">
               <p>Transport : </p>
@@ -105,7 +109,7 @@ function PartnerTransportInfo({ formData = {} }: PartnerTransportInfoProps) {
 
         {/* Passengers Summary */}
         {totalPassengers > 0 && (
-          <div className="border-t border-gray-200 pt-6 mb-6">
+          <div className="border-t border-gray-200 pt-4 mb-4">
             <p className="text-sm text-gray-600 mb-3">Guests</p>
             <div className="space-y-2 mb-4">
               {totalAdults > 0 && (
@@ -132,16 +136,13 @@ function PartnerTransportInfo({ formData = {} }: PartnerTransportInfoProps) {
 
         {/* Pricing */}
         {totalAmount > 0 && (
-          <div className="border-t border-gray-200 pt-6 mb-6">
+          <div className="border-t border-gray-200 pt-4 mb-4">
             <p className="text-sm text-gray-600 mb-3">Unit Price</p>
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-3 text-sm">
                 <p>
-                  ${ADULT_PRICE.toFixed(2)} (Adults), ${CHILD_PRICE.toFixed(2)}
+                  ${ADULT_PRICE.toFixed(2)} (Adults), ${CHILD_PRICE.toFixed(2)} (Children)
                 </p>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <p>(Children)</p>
               </div>
             </div>
           </div>
@@ -149,8 +150,8 @@ function PartnerTransportInfo({ formData = {} }: PartnerTransportInfoProps) {
 
         {/* Amount to Pay */}
         {totalAmount > 0 && (
-          <div className="pt-6">
-            <div className="flex items-center justify-between pt-3 border-t border-gray-200 mb-4">
+          <div>
+            <div className="flex items-center justify-between pt-3 border-t border-gray-200">
               <span className="font-semibold text-blue-600">Amount to Pay</span>
               <span className="text-lg font-bold text-blue-600">
                 ${totalAmount.toFixed(2)}
