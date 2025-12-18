@@ -1,4 +1,6 @@
 import { CruiseSalesFormData } from "@/lib/schemas";
+import Image from "next/image";
+import logo from "@/public/logo.svg"
 
 interface CruiseTransportInfoProps {
   formData: Partial<CruiseSalesFormData>;
@@ -62,23 +64,24 @@ function CruiseTransportInfo({ formData }: CruiseTransportInfoProps) {
     <div className=" bg-white border-l border-gray-200 overflow-y-auto md:min-w-xs lg:min-w-sm xl:min-w-md p-2 md:p-4 lg:p-6">
       <div className="">
         {/* Header */}
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Receipt</h2>
-        </div>
+        <header className="mb-6">
+          <Image src={logo} alt="Company Logo" width={50} height={50} />
+          <h2 className="text-xl font-semibold text-gray-900 mt-2">Receipt</h2>
+        </header>
 
         {/* Tour Information */}
-        <div className="mb-4 flex items-center gap-3 text-sm tracking-widest">
+        <div className="mb-2 flex items-center gap-3 text-sm tracking-widest">
           <p>Tour : </p>
           <p>{formData.tour ? formData.tour : "N/A"}</p>
         </div>
 
-        <div className="mb-4 flex items-center gap-3 text-sm tracking-widest">
+        <div className="mb-2 flex items-center gap-3 text-sm tracking-widest">
           <p>Guide : </p>
           <p>{formData.guide ? formData.guide : "N/A"}</p>
         </div>
 
         {/* Date and Time */}
-        <div className="space-y-3 mb-6">
+        <div className="space-y-2 mb-6">
           <div className="flex items-start gap-3">
             <div className="flex items-center gap-3 text-sm tracking-widest">
               <p>Departure Time : </p>
@@ -115,7 +118,7 @@ function CruiseTransportInfo({ formData }: CruiseTransportInfoProps) {
         </div>
 
         {/* Transport Details */}
-        <div className="border-t border-gray-200 pt-6 mb-6">
+        <div className="border-t border-gray-200 pt-6 mb-6 space-y-2">
           <div className="flex items-start gap-3">
             <div className="flex items-center gap-3 text-sm tracking-widest">
               <p>Bus : </p>

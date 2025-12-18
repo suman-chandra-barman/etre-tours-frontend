@@ -4,6 +4,7 @@ import { useState } from "react";
 import CruiseSalesForm from "@/components/sales/forms/CruiseSalesForm";
 import CruiseTransportInfo from "@/components/sales/transportInfo/CruiseTransportInfo";
 import { CruiseSalesFormData } from "@/lib/schemas";
+import styles from "@/components/styles/Print.module.css";
 
 function CruiseSalesPage() {
   const [currentFormData, setCurrentFormData] = useState<
@@ -14,6 +15,8 @@ function CruiseSalesPage() {
     console.log("Form submitted with data:", data);
     // Here you would typically send the data to your backend API
     // For now, we'll just log it and show a success message
+
+    window.print();
   };
 
   return (
@@ -22,7 +25,10 @@ function CruiseSalesPage() {
         onSubmit={handleFormSubmit}
         onFormDataChange={setCurrentFormData}
       />
-      <CruiseTransportInfo formData={currentFormData} />
+
+      <div className={`${styles.printArea}`}>
+        <CruiseTransportInfo formData={currentFormData} />
+      </div>
     </div>
   );
 }
