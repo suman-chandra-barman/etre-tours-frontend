@@ -4,9 +4,10 @@ import logo from "@/public/logo.svg"
 
 interface CruiseTransportInfoProps {
   formData: Partial<CruiseSalesFormData>;
+  className?: string;
 }
 
-function CruiseTransportInfo({ formData }: CruiseTransportInfoProps) {
+function CruiseTransportInfo({ formData, className }: CruiseTransportInfoProps) {
   const additionalTransports = formData.additionalTransports || [];
 
   // Calculate duration in minutes
@@ -61,7 +62,7 @@ function CruiseTransportInfo({ formData }: CruiseTransportInfoProps) {
   const totalPassengers = totalAdults + totalChildren + totalInfants + totalFOC;
 
   return (
-    <div className=" bg-white border-l border-gray-200 overflow-y-auto md:min-w-xs lg:min-w-sm xl:min-w-md p-2 md:p-4 lg:p-6">
+    <div className={` bg-white border-l border-gray-200 overflow-y-auto md:min-w-xs lg:min-w-sm xl:min-w-md p-2 md:p-4 lg:p-6 ${className}`}>
       <div className="">
         {/* Header */}
         <header className="mb-6">

@@ -26,9 +26,10 @@ function CruiseSalesPage() {
         onFormDataChange={setCurrentFormData}
       />
 
-      <div className={`${styles.printArea}`}>
-        <CruiseTransportInfo formData={currentFormData} />
-      </div>
+      <CruiseTransportInfo
+        formData={currentFormData}
+        className={styles.printArea}
+      />
     </div>
   );
 }
