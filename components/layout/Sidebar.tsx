@@ -29,6 +29,8 @@ function Sidebar() {
   const currentRole = role || getRoleFromPath();
 
   const handleLogout = () => {
+    // Clear user role cookie
+    document.cookie = "userRole=; path=/; max-age=0";
     setUser(null);
     router.push("/login");
   };

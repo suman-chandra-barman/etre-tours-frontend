@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { User, UserRole } from "@/types/user";
 
 interface UserContextType {
@@ -16,6 +22,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const role = user?.role || null;
+
+  // Store role in cookie whenever user changes
+  useEffect(() => {
+    if (user?.role) {
+      document.cookie = `userRole=${user.role}; path=/; max-age=86400`; // 24 hours
+    } else {
+      // Clear cookie on logout
+      document.cookie = "userRole=; path=/; max-age=0";
+    }
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setUser, role }}>
