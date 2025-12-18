@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Search, Printer, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "../ui/button";
+import styles from "@/components/styles/Print.module.css";
 
 interface TransportItem {
   id: number;
@@ -109,10 +109,12 @@ export default function TransportTable({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow print-area">
+    <div className={`bg-white rounded-lg shadow ${styles.printArea}`}>
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-6 no-print">
+        <div
+          className={`flex items-center justify-between mb-6 ${styles.noPrint}`}
+        >
           <h2 className="text-2xl font-semibold text-gray-900">
             Transport List
           </h2>
@@ -126,7 +128,7 @@ export default function TransportTable({
         </div>
 
         {/* Filters */}
-        <div className="mb-4 no-print">
+        <div className={`mb-4 ${styles.noPrint}`}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex flex-wrap gap-3">
               {/* Filter Dropdowns */}
@@ -237,7 +239,9 @@ export default function TransportTable({
       </div>
 
       {/* Pagination */}
-      <div className="p-4 border-t border-gray-200 flex items-center justify-end gap-2 no-print">
+      <div
+        className={`p-4 border-t border-gray-200 flex items-center justify-end gap-2 ${styles.noPrint}`}
+      >
         <button
           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
           disabled={currentPage === 1}

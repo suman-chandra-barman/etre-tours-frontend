@@ -10,6 +10,7 @@ import StaffTable from "@/components/tables/StaffTable";
 import AddStaffModal from "@/components/modals/AddStaffModal";
 import { Staff, StaffStats, StatCardData } from "@/types/admin";
 import AdminHeader from "@/components/admin/AdminHeader";
+import styles from "@/components/styles/Print.module.css";
 
 // Mock data for demonstration
 const mockStats: StaffStats = {
@@ -132,7 +133,9 @@ export default function StaffsPage() {
   return (
     <div className="flex-1 overflow-auto p-8 bg-gray-50">
       {/* Header Section */}
-      <div className="mb-6 flex items-center justify-between no-print">
+      <div
+        className={`mb-6 flex items-center justify-between ${styles.noPrint}`}
+      >
         <AdminHeader />
         <Button
           onClick={() => setIsModalOpen(true)}
@@ -144,7 +147,9 @@ export default function StaffsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 print-area">
+      <div
+        className={`grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 ${styles.noPrint}`}
+      >
         {statsCards.map((card, index) => (
           <StatCard
             key={index}
@@ -163,13 +168,13 @@ export default function StaffsPage() {
             <h2 className="text-xl font-semibold text-gray-900">Staff&#39;s</h2>
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium no-print"
+              className={`flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium ${styles.noPrint}`}
             >
               <Printer className="w-4 h-4" />
               Print
             </button>
           </div>
-          <div className="mt-4 flex items-center gap-4 no-print">
+          <div className={`mt-4 flex items-center gap-4 ${styles.noPrint}`}>
             <Button
               variant="outline"
               className="flex items-center gap-2 border-gray-300"
@@ -183,7 +188,7 @@ export default function StaffsPage() {
           </div>
         </div>
 
-        <div className="print-area">
+        <div className={styles.printArea}>
           <StaffTable staffData={staffData} />
         </div>
       </Card>
