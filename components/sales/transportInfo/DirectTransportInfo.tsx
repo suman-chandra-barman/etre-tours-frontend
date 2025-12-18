@@ -35,7 +35,7 @@ export default function DirectTransportInfo({
       : "N/A";
 
   return (
-    <div className="lg:min-w-md bg-gray-50 border-l border-gray-200 p-4 lg:p-6">
+    <div className="bg-gray-50 border-l border-gray-200 md:min-w-xs lg:min-w-sm xl:min-w-md p-2 md:p-4 lg:p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center mb-1">
