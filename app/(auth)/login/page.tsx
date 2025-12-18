@@ -15,7 +15,7 @@ function LoginPage() {
   };
 
   return (
-    <main className="w-full h-screen flex items-center justify-center bg-gray-50">
+    <main className="h-screen flex items-start xl:items-center justify-center mt-20 xl:mt-0 bg-gray-50">
       <section className="w-full max-w-md p-4 md:p-6 lg:p-8 bg-white rounded-xl">
         {/* Logo */}
         <div className="flex justify-center mb-8">
