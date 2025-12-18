@@ -1,20 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Header from "@/components/layout/Header";
 import {
   Calendar,
-  Clock,
   Search,
-  Filter,
-  Download,
   Printer,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import styles from "@/components/styles/Print.module.css";
 
 interface TourHistoryItem {
   id: number;
@@ -78,12 +72,14 @@ export default function TourHistoryPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <div className="flex-1 overflow-auto">
-        <div className="max-w-[1920px] mx-auto p-6">
+    <div className="flex flex-col bg-gray-50 overflow-y-auto">
+      <div className="flex-1">
+        <div className="p-6">
           {/* Header Section */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
+          <div
+            className={`flex items-center justify-between mb-6 ${styles.noPrint}`}
+          >
+            <div className={`flex items-center gap-3 `}>
               <h1 className="text-2xl font-semibold text-gray-900">
                 Tour History
               </h1>
@@ -99,8 +95,10 @@ export default function TourHistoryPage() {
           </div>
 
           {/* Filters Section */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
-            <div className="flex items-center justify-between  mb-4">
+          <div
+            className={`bg-white rounded-xl border border-gray-200 p-4 mb-4 ${styles.noPrint}`}
+          >
+            <div className="flex justify-between  mb-4">
               <div className="flex flex-wrap gap-3">
                 {/* Date Input */}
                 <div className="relative">
@@ -190,7 +188,7 @@ export default function TourHistoryPage() {
                 </select>
               </div>
               {/* Apply Filter Button */}
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors">
+               <button className="min-w-32 h-10 px-6 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors">
                 Apply filter
               </button>
             </div>
@@ -209,11 +207,11 @@ export default function TourHistoryPage() {
           </div>
 
           {/* Table Section */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className={`bg-white rounded-xl ${styles.printArea}`}>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
+                  <tr className="border-b border-gray-200">
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                       Issue Date
                     </th>
@@ -313,7 +311,9 @@ export default function TourHistoryPage() {
             </div>
 
             {/* Pagination */}
-            <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between">
+            <div
+              className={`px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-white ${styles.noPrint}`}
+            >
               <div className="text-sm text-gray-600">
                 Showing {startIndex + 1} to{" "}
                 {Math.min(endIndex, filteredData.length)} of{" "}
