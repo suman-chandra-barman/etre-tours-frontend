@@ -99,7 +99,7 @@ export default function TourHistoryPage() {
           <div
             className={`bg-white rounded-xl border border-gray-200 p-4 mb-4 ${styles.noPrint}`}
           >
-            <div className="flex items-center justify-between  mb-4">
+            <div className="flex justify-between  mb-4">
               <div className="flex flex-wrap gap-3">
                 {/* Date Input */}
                 <div className="relative">
@@ -189,7 +189,7 @@ export default function TourHistoryPage() {
                 </select>
               </div>
               {/* Apply Filter Button */}
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors">
+              <button className="min-w-32 h-10 px-6 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition-colors">
                 Apply filter
               </button>
             </div>
