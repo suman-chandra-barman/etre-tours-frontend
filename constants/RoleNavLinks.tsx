@@ -36,6 +36,13 @@ export const roleNavLinks: Record<UserRole, NavLink[]> = {
       icon: <Settings className="w-6 h-6 mb-1" />,
     },
   ],
+  "cheif-admin": [
+    {
+      href: "/chief-admin",
+      label: "Overview",
+      icon: <LayoutDashboard className="w-6 h-6 mb-1" />,
+    },
+  ],
   "direct-sales": [
     {
       href: "/direct-sales",

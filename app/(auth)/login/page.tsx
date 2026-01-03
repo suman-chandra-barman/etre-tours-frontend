@@ -40,6 +40,9 @@ function LoginPage() {
 
       // Redirect based on role
       switch (selectedRole) {
+        case "cheif-admin":
+          router.push("/chief-admin");
+          break;
         case "admin":
           router.push("/admin");
           break;
@@ -140,6 +143,14 @@ function LoginPage() {
               Select Role
             </label>
             <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setSelectedRole("cheif-admin")}
+                variant={selectedRole === "cheif-admin" ? "default" : "outline"}
+              >
+                Chief Admin
+              </Button>
               <Button
                 type="button"
                 size="sm"
