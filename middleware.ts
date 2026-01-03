@@ -11,11 +11,16 @@ const ROUTES = {
   PARTNER_SALES: "/partner-sales",
 } as const;
 
-type UserRole = "cheif-admin"|"admin" | "cruise-sales" | "direct-sales" | "partner-sales";
+type UserRole =
+  | "chief-admin"
+  | "admin"
+  | "cruise-sales"
+  | "direct-sales"
+  | "partner-sales";
 
 // Route permissions mapping
 const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
-  [ROUTES.CHIEF_ADMIN]: ["cheif-admin"],
+  [ROUTES.CHIEF_ADMIN]: ["chief-admin"],
   [ROUTES.ADMIN]: ["admin"],
   [ROUTES.CRUISE_SALES]: ["cruise-sales"],
   [ROUTES.DIRECT_SALES]: ["direct-sales"],
@@ -24,7 +29,7 @@ const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
 
 // Role to dashboard mapping
 const ROLE_DASHBOARD_MAP: Record<UserRole, string> = {
-  "cheif-admin": ROUTES.CHIEF_ADMIN,
+  "chief-admin": ROUTES.CHIEF_ADMIN,
   admin: ROUTES.ADMIN,
   "cruise-sales": ROUTES.CRUISE_SALES,
   "direct-sales": ROUTES.DIRECT_SALES,

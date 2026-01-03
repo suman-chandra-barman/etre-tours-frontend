@@ -1,5 +1,13 @@
 import React from "react";
-import { Clock, Users, Hotel, LayoutDashboard, Landmark, BusFront, Settings } from "lucide-react";
+import {
+  Clock,
+  Users,
+  Hotel,
+  LayoutDashboard,
+  Landmark,
+  BusFront,
+  Settings,
+} from "lucide-react";
 import { UserRole } from "@/types/user";
 
 interface NavLink {
@@ -36,7 +44,7 @@ export const roleNavLinks: Record<UserRole, NavLink[]> = {
       icon: <Settings className="w-6 h-6 mb-1" />,
     },
   ],
-  "cheif-admin": [
+  "chief-admin": [
     {
       href: "/chief-admin",
       label: "Overview",
